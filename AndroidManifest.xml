@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.android_test"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="17" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="cm.proj.MainMenu"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="cm.proj.TimeLine"
+            android:label="@string/title_activity_display_message" >
+        </activity>
+        <activity
+            android:name="cm.proj.Login"
+            android:label="@string/title_activity_login" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="cm.proj.TweetReceiving"
+            android:label="@string/service_name" >
+        </service>
+
+        <activity
+            android:name="cm.proj.DisplayTimeLine"
+            android:label="@string/title_activity_display_time_line" >
+        </activity>
+        <activity
+            android:name="cm.proj.DisplayTweetInfo"
+            android:label="@string/title_activity_display_tweet_info" >
+        </activity>
+        <activity
+            android:name="cm.proj.PostOnFacebook"
+            android:label="@string/title_activity_post_on_facebook" >
+        </activity>
+        <activity
+            android:name="com.facebook.LoginActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/app_id" />
+    </application>
+
+</manifest>
