@@ -6,9 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import com.example.android_test.R;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -21,9 +20,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import dto.TweetDto;
+
+import com.example.android_test.R;
 
 public class MainMenu extends Activity {
 
@@ -33,10 +33,11 @@ public class MainMenu extends Activity {
 	static ObjectOutputStream oos;
 	boolean mIsBound;
 	static TweetReceiving mBoundService;
-	String user = "Anonimous";
+	static String user = "Anonimous";
 	byte[] image = null;
-	
+
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+	private static final int RESULT_LOAD_IMAGE = 10;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +46,27 @@ public class MainMenu extends Activity {
 
 		Intent iin = getIntent();
 		Bundle b = iin.getExtras();
-		if(b.get("user") != null){
-	        user = (String) b.get("user");
-	    }
-		
+		if (b.get("user") != null) {
+			user = (String) b.get("user");
+		}
+
 		Log.d("Paulo", user);
 		doBindService();
 		Log.d("Paulo", "binded");
+
+		Button buttonLoadImage = (Button) findViewById(R.id.button4);
+		buttonLoadImage.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				
+				
+				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);  
+				intent.setType("image/*");
+				startActivityForResult(intent, RESULT_LOAD_IMAGE); 
+				
+			}
+		});
 	}
 
 	@Override
@@ -62,7 +77,8 @@ public class MainMenu extends Activity {
 	}
 
 	public void sendTweet(View view) {
-		String input = ((EditText) findViewById(R.id.tweetString)).getText().toString();
+		String input = ((EditText) findViewById(R.id.tweetString)).getText()
+				.toString();
 		SendTweetTask task = new SendTweetTask();
 		task.execute(input);
 
@@ -86,20 +102,13 @@ public class MainMenu extends Activity {
 		protected Boolean doInBackground(String... params) {
 			try {
 				tweet = params[0];
-
-				TweetDto tweetDto = new TweetDto();
-				tweetDto.setTweet(tweet);
-				tweetDto.setId(user);
-				tweetDto.setImage(image);
-				MainMenu.oos.writeObject(tweetDto);
-				MainMenu.oos.flush();
-
+				Utils.SendTweet(tweet, user, image);
+				return true;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			return true;
+			return false;
 		}
 
 	}
@@ -116,15 +125,13 @@ public class MainMenu extends Activity {
 		startActivity(i);
 
 	}
-	
+
 	public void takePhoto(View view) {
 
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
 	}
-	
-	
 
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -151,26 +158,52 @@ public class MainMenu extends Activity {
 			mIsBound = false;
 		}
 	}
-	
+
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {        
-	    if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-	        if (resultCode == Activity.RESULT_OK) {
-	            Bitmap bmp = (Bitmap) data.getExtras().get("data");
-	            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-	            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-	            image = stream.toByteArray();
-	            
-	            Log.d("Paulo", new String(image));
-	            
-	            ((ImageView)findViewById(R.id.imageView1)).setImageBitmap(bmp);
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+			if (resultCode == Activity.RESULT_OK) {
+				Bitmap bmp = (Bitmap) data.getExtras().get("data");
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+				image = stream.toByteArray();
 
-	        } else if (resultCode == Activity.RESULT_CANCELED) {
-	            // User cancelled the image capture
-	        } else {
-	            // Image capture failed, advise user
-	        }
-	    }               
+				new AlertDialog.Builder(this).setTitle("Camera")
+						.setMessage("Photo has been taken sucessfully")
+						.setPositiveButton("ok", null).show();
+
+			} else if (resultCode == Activity.RESULT_CANCELED) {
+				new AlertDialog.Builder(this).setTitle("Camera")
+						.setMessage("You cancelled the image capture")
+						.setPositiveButton("ok", null).show();
+
+			} else {
+				new AlertDialog.Builder(this).setTitle("Camera")
+						.setMessage(" Image capture failed")
+						.setPositiveButton("ok", null).show();
+			}
+			
+		} else if (requestCode == RESULT_LOAD_IMAGE) {
+			if (resultCode == Activity.RESULT_OK) {
+				Bitmap bmp = (Bitmap) data.getExtras().get("data");
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+				image = stream.toByteArray();
+
+				new AlertDialog.Builder(this).setTitle("Gallery")
+						.setMessage("Photo has been loaded sucessfully")
+						.setPositiveButton("ok", null).show();
+
+			} else if (resultCode == Activity.RESULT_CANCELED) {
+				new AlertDialog.Builder(this).setTitle("Gallery")
+						.setMessage("You canceled the load of a image from the gallery")
+						.setPositiveButton("ok", null).show();
+
+			} else {
+				new AlertDialog.Builder(this).setTitle("Gallery")
+						.setMessage(" Gallery image failed to load")
+						.setPositiveButton("ok", null).show();
+			}
+		}
 	}
-
 }

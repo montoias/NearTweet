@@ -1,6 +1,8 @@
 package cm.proj;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,11 +11,18 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android_test.R;
@@ -34,11 +43,10 @@ import dto.TweetDto;
 
 public class DisplayTweetInfo extends Activity {
 
-	int position;
-	private static final List<String> PERMISSIONS = Arrays
-			.asList("publish_actions");
+	int position = 0, conversationID = 0;
+	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
 	private final String PENDING_ACTION_BUNDLE_KEY = "com.facebook.samples.hellofacebook:PendingAction";
-	private Button postStatusUpdateButton;
+	private Button postStatusUpdateButton, responseTweetButton;
 	private LoginButton loginButton;
 	private ProfilePictureView profilePictureView;
 	private TextView greeting;
@@ -47,47 +55,66 @@ public class DisplayTweetInfo extends Activity {
 	Bitmap bm = null;
 	String message = "";
 	byte[] imageBytes = null;
+	ArrayList<TweetDto> conversation, tweets;
 
-	private enum PendingAction {
-		NONE, POST_TIMELINE
-	}
+	private enum PendingAction { NONE, POST_TIMELINE }
 
 	private UiLifecycleHelper uiHelper;
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 		@Override
-		public void call(Session session, SessionState state,
-				Exception exception) {
+		public void call(Session session, SessionState state, Exception exception) {
 			onSessionStateChange(session, state, exception);
 		}
 	};
+	
+	public void displayTweetImage() {
+    	
+		((ListView) findViewById(R.id.listTweetInfo)).setOnItemClickListener(
+    	        new OnItemClickListener()
+    	        {
+
+    	            @Override
+    	            public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+    	            	Log.d("Paulo", conversation.toString());
+    	            	if (conversation.get(position).getImage() != null) {
+    	        			imageBytes = conversation.get(position).getImage();
+
+    	        			ByteArrayInputStream stream = new ByteArrayInputStream(imageBytes);
+    	        			bm = BitmapFactory.decodeStream(stream);
+
+    	        			((ImageView) findViewById(R.id.displayTweetInfoImageView)).setImageBitmap(bm);
+
+    	        		} 
+    	            }   
+    	        }       
+    	);
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_tweet_info);
-
 		Intent iin = getIntent();
 		Bundle b = iin.getExtras();
 		if (b.get("position") != null) {
 			position = (Integer) b.get("position");
+			tweets = MainMenu.mBoundService.tweets;
+			conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
+			message = tweets.get(position).getTweet();
+			conversationID = tweets.get(position).getConversationID();
+		} else {
+			throw new RuntimeException("Should have a position as argument");
 		}
 
-		TweetDto td = MainMenu.mBoundService.tweets.get(position);
-
-		if (td.getImage() != null) {
-			imageBytes = td.getImage();
-
-			ByteArrayInputStream stream = new ByteArrayInputStream(imageBytes);
-			bm = BitmapFactory.decodeStream(stream);
-
-			((ImageView) findViewById(R.id.displayTweetInfoImageView))
-					.setImageBitmap(bm);
-
-		}
-
-		message = td.getTweet();
-		((TextView) findViewById(R.id.displayTweetText)).setText(td.getTweet());
-
+		ListView listView = (ListView) findViewById(R.id.listTweetInfo);
+		String[] values = Utils.convertTweetToString(conversation);
+		
+		for(int i = 1; i < conversation.size(); i++)
+			values[i] = "\t" + values[i];
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);
+		listView.setAdapter(adapter);
+		
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
 
@@ -97,8 +124,7 @@ public class DisplayTweetInfo extends Activity {
 		}
 
 		loginButton = (LoginButton) findViewById(R.id.login_button);
-		loginButton
-				.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+		loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 					@Override
 					public void onUserInfoFetched(GraphUser user) {
 						DisplayTweetInfo.this.user = user;
@@ -116,12 +142,23 @@ public class DisplayTweetInfo extends Activity {
 				onClickPostStatusUpdate();
 			}
 		});
+		
+		
+		responseTweetButton = (Button) findViewById(R.id.responseTweetButton);
+		responseTweetButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View view) {
+				EditText et = (EditText)findViewById(R.id.responseTextTweet);
+				SendTweetTask task = new SendTweetTask();
+				task.execute(et.getText().toString());
+			}
+		});
+		
+		displayTweetImage();
 
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.display_tweet_info, menu);
 		return true;
 	}
@@ -130,7 +167,6 @@ public class DisplayTweetInfo extends Activity {
 	protected void onResume() {
 		super.onResume();
 		uiHelper.onResume();
-
 		updateUI();
 	}
 
@@ -138,7 +174,6 @@ public class DisplayTweetInfo extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		uiHelper.onSaveInstanceState(outState);
-
 		outState.putString(PENDING_ACTION_BUNDLE_KEY, pendingAction.name());
 	}
 
@@ -270,8 +305,7 @@ public class DisplayTweetInfo extends Activity {
 
 	private boolean hasPublishPermission() {
 		Session session = Session.getActiveSession();
-		return session != null
-				&& session.getPermissions().contains("publish_actions");
+		return session != null	&& session.getPermissions().contains("publish_actions");
 	}
 
 	private void performPublish(PendingAction action) {
@@ -284,10 +318,41 @@ public class DisplayTweetInfo extends Activity {
 			} else {
 				// We need to get new permissions, then complete the action when
 				// we get called back.
-				session.requestNewPublishPermissions(new Session.NewPermissionsRequest(
-						this, PERMISSIONS));
+				session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
 			}
 		}
 	}
+	
+	
+	public class SendTweetTask extends AsyncTask<String, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			try {
+				
+				//TODO: images on responses
+				Utils.SendResponseTweet(params[0], MainMenu.user, null, conversationID);
+				return true;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return false;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result) {
+				Log.d("Paulo", "Do in backgroud executed correctly");
+				finish();
+				startActivity(getIntent());
+				
+			} else {
+				Log.d("Paulo", "Do in backgroud executed incorrectly");
+			}
+		}
+	
+	}
+
 
 }

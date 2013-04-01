@@ -34,21 +34,23 @@
         android:onClick="displayTimeLine"
         android:text="@string/DisplayTimeLine" />
 
-     <ImageView
-         android:id="@+id/imageView1"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_below="@+id/button2"
-         android:layout_marginTop="130dp"
-         android:layout_toLeftOf="@+id/button1" />
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button2"
+        android:layout_toLeftOf="@+id/button1"
+        android:onClick="takePhoto"
+        android:text="Camera" />
 
-     <Button
-         android:id="@+id/button3"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_below="@+id/button2"
-         android:layout_toLeftOf="@+id/button1"
-         android:onClick="takePhoto"
-         android:text="photo" />
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button3"
+        android:layout_alignBottom="@+id/button3"
+        android:layout_toRightOf="@+id/button2"
+        android:onClick="choosePhoto"
+        android:text="Gallery" />
 
 </RelativeLayout>

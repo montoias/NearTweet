@@ -24,8 +24,7 @@
         android:layout_alignRight="@+id/displayTweetText"
         android:layout_marginRight="52dp"
         android:gravity="center_horizontal" />
-    
-    
+
     <TextView
         android:id="@+id/displayTweetText"
         android:layout_width="400dp"
@@ -35,7 +34,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textIsSelectable="true" />
 
-    
     <ImageView
         android:id="@+id/displayTweetInfoImageView"
         android:layout_width="250dp"
@@ -53,7 +51,6 @@
         android:layout_marginBottom="80dp"
         android:text="Post Status Update" />
 
-    
     <TextView
         android:id="@+id/greeting"
         android:layout_width="wrap_content"
@@ -65,5 +62,31 @@
         android:textColor="#333"
         android:textIsSelectable="true"
         android:textSize="18sp" />
-    
+
+    <ListView
+        android:id="@+id/listTweetInfo"
+        android:layout_width="500dp"
+        android:layout_height="400dp" />
+
+    <Button
+        android:id="@+id/responseTweetButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/displayTweetInfoImageView"
+        android:layout_below="@+id/login_button"
+        android:text="Response to the Tweet" />
+
+    <EditText
+        android:id="@+id/responseTextTweet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/profilePicture"
+        android:layout_alignLeft="@+id/responseTweetButton"
+        android:layout_alignRight="@+id/responseTweetButton"
+        android:layout_alignTop="@+id/profilePicture"
+        android:layout_marginLeft="47dp"
+        android:ems="10" >
+
+    </EditText>
+
 </RelativeLayout>

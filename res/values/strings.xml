@@ -18,5 +18,7 @@
     <string name="title_activity_post_on_facebook">PostOnFacebook</string>
     <string name="app_id">490238947708640</string>
     <string name="hello_user">Hello %1$s!</string>
+    <string name="title_activity_response_tweet">ResponseTweet</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

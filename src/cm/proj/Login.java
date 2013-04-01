@@ -22,6 +22,8 @@ import dto.UserNameDto;
 
 public class Login extends Activity {
 
+	Socket socket; // Network Socket
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,6 +37,18 @@ public class Login extends Activity {
 		return true;
 	}
 
+	@Override
+	public void onDestroy() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.onDestroy();
+		
+	}
+
 	public void register(View view) {
 
 		String input = ((EditText) findViewById(R.id.userString)).getText()
@@ -46,7 +60,6 @@ public class Login extends Activity {
 	}
 
 	public class NetworkTask extends AsyncTask<Void, Void, Boolean> {
-		Socket socket; // Network Socket
 		ObjectOutputStream oos;
 		ObjectInputStream ois;
 		String input;
@@ -63,10 +76,10 @@ public class Login extends Activity {
 				Intent i = new Intent(activity, MainMenu.class);
 				i.putExtra("user", input);
 				startActivity(i);
-				
+
 				Intent service = new Intent(activity, TweetReceiving.class);
 				startService(service);
-				
+
 			} else {
 				Toast.makeText(activity,
 						"The Client already Exists. Try Another User Name",
@@ -80,13 +93,13 @@ public class Login extends Activity {
 															// different thread
 			try {
 
-				socket = new Socket("10.0.2.2", 8081); // connect to																// server
+				socket = new Socket("10.0.2.2", 8081); // connect to // server
 				UserNameDto info = new UserNameDto(input);
-				
+
 				oos = new ObjectOutputStream(socket.getOutputStream());
-				oos.writeObject(info); 
+				oos.writeObject(info);
 				oos.flush();
-				
+
 				ois = new ObjectInputStream(socket.getInputStream());
 				ResponseDto response = (ResponseDto) ois.readObject();
 				String serverResponse = response.getResponse();
@@ -96,7 +109,7 @@ public class Login extends Activity {
 					MainMenu.socket = socket;
 					MainMenu.oos = oos;
 					MainMenu.ois = ois;
-					
+
 					return true;
 				}
 				Log.d("Paulo", "resposta: " + serverResponse);
