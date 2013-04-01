@@ -73,8 +73,7 @@ public class MainMenu extends Activity {
 	}
 
 	public void sendTweet(View view) {
-		String input = ((EditText) findViewById(R.id.tweetString)).getText()
-				.toString();
+		String input = ((EditText) findViewById(R.id.tweetString)).getText().toString();
 		SendTweetTask task = new SendTweetTask();
 		task.execute(input);
 
@@ -149,7 +148,6 @@ public class MainMenu extends Activity {
 
 	void doUnbindService() {
 		if (mIsBound) {
-			// Detach our existing connection.
 			unbindService(mConnection);
 			mIsBound = false;
 		}
