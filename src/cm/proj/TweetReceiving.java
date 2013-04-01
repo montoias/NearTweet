@@ -20,7 +20,7 @@ public class TweetReceiving extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		SendTweetTask task = new SendTweetTask();
+		ReceiveTweetTask task = new ReceiveTweetTask();
 		task.execute();
 		return Service.START_NOT_STICKY;
 	}
@@ -37,7 +37,7 @@ public class TweetReceiving extends Service {
 	}
 	
 
-	public class SendTweetTask extends AsyncTask<String, Void, Boolean> {
+	public class ReceiveTweetTask extends AsyncTask<String, Void, Boolean> {
 
 		@Override
 		protected Boolean doInBackground(String... params) {

@@ -36,8 +36,7 @@ public class MainMenu extends Activity {
 	static String user = "Anonimous";
 	byte[] image = null;
 
-	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-	private static final int RESULT_LOAD_IMAGE = 10;
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100, RESULT_LOAD_IMAGE = 10;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +55,12 @@ public class MainMenu extends Activity {
 
 		Button buttonLoadImage = (Button) findViewById(R.id.button4);
 		buttonLoadImage.setOnClickListener(new View.OnClickListener() {
-
+			
 			@Override
 			public void onClick(View arg0) {
-				
-				
 				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);  
 				intent.setType("image/*");
-				startActivityForResult(intent, RESULT_LOAD_IMAGE); 
-				
+				startActivityForResult(intent, RESULT_LOAD_IMAGE);
 			}
 		});
 	}
