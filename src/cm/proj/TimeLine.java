@@ -22,9 +22,8 @@ public class TimeLine extends Activity {
 		
 		listView = (ListView) findViewById(R.id.list);
 		String[] values = Utils.convertTweetToString(MainMenu.mBoundService.tweets);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-		  android.R.layout.simple_list_item_1, android.R.id.text1, values);
-		// Assign adapter to ListView
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
 		listView.setAdapter(adapter);
 		displayTweet();
 	}

@@ -1,7 +1,5 @@
 package cm.proj;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,10 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -60,6 +55,7 @@ public class DisplayTweetInfo extends Activity {
 	private enum PendingAction { NONE, POST_TIMELINE }
 
 	private UiLifecycleHelper uiHelper;
+	
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 		@Override
 		public void call(Session session, SessionState state, Exception exception) {
@@ -75,13 +71,11 @@ public class DisplayTweetInfo extends Activity {
 
     	            @Override
     	            public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-    	            	Log.d("Paulo", conversation.toString());
     	            	if (conversation.get(position).getImage() != null) {
     	        			imageBytes = conversation.get(position).getImage();
-
-    	        			ByteArrayInputStream stream = new ByteArrayInputStream(imageBytes);
-    	        			bm = BitmapFactory.decodeStream(stream);
-
+    	        			message = conversation.get(position).getTweet();
+    	        			bm = Utils.convertBytesToBmp(imageBytes);
+    	        			
     	        			((ImageView) findViewById(R.id.displayTweetInfoImageView)).setImageBitmap(bm);
 
     	        		} 
@@ -97,11 +91,13 @@ public class DisplayTweetInfo extends Activity {
 		Intent iin = getIntent();
 		Bundle b = iin.getExtras();
 		if (b.get("position") != null) {
+			
 			position = (Integer) b.get("position");
 			tweets = MainMenu.mBoundService.tweets;
 			conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
 			message = tweets.get(position).getTweet();
 			conversationID = tweets.get(position).getConversationID();
+			
 		} else {
 			throw new RuntimeException("Should have a position as argument");
 		}
@@ -148,8 +144,10 @@ public class DisplayTweetInfo extends Activity {
 		responseTweetButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				EditText et = (EditText)findViewById(R.id.responseTextTweet);
-				SendTweetTask task = new SendTweetTask();
-				task.execute(et.getText().toString());
+				SendResponseTweetTask task = new SendResponseTweetTask(et.getText().toString(), MainMenu.user, null, conversationID);
+				task.execute();
+				
+				et.getText().clear();
 			}
 		});
 		
@@ -195,13 +193,9 @@ public class DisplayTweetInfo extends Activity {
 		uiHelper.onDestroy();
 	}
 
-	private void onSessionStateChange(Session session, SessionState state,
-			Exception exception) {
-		if (pendingAction != PendingAction.NONE
-				&& (exception instanceof FacebookOperationCanceledException || exception instanceof FacebookAuthorizationException)) {
-			new AlertDialog.Builder(DisplayTweetInfo.this).setTitle("cancel")
-					.setMessage("permission not granted")
-					.setPositiveButton("ok", null).show();
+	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+		if (pendingAction != PendingAction.NONE && (exception instanceof FacebookOperationCanceledException || exception instanceof FacebookAuthorizationException)) {
+			new AlertDialog.Builder(DisplayTweetInfo.this).setTitle("cancel").setMessage("permission not granted").setPositiveButton("ok", null).show();
 			pendingAction = PendingAction.NONE;
 		} else if (state == SessionState.OPENED_TOKEN_UPDATED) {
 			handlePendingAction();
@@ -212,9 +206,7 @@ public class DisplayTweetInfo extends Activity {
 	private void updateUI() {
 		Session session = Session.getActiveSession();
 		boolean enableButtons = (session != null && session.isOpened());
-
 		postStatusUpdateButton.setEnabled(enableButtons);
-
 		if (enableButtons && user != null) {
 			profilePictureView.setProfileId(user.getId());
 			greeting.setText(getString(R.string.hello_user, user.getFirstName()));
@@ -224,25 +216,21 @@ public class DisplayTweetInfo extends Activity {
 		}
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	private void handlePendingAction() {
 		PendingAction previouslyPendingAction = pendingAction;
 		pendingAction = PendingAction.NONE;
-		switch (previouslyPendingAction) {
-		case POST_TIMELINE:
+		if(previouslyPendingAction == PendingAction.POST_TIMELINE)
 			postTimeLine();
-			break;
-		}
+		
 	}
 
 	private interface GraphObjectWithId extends GraphObject {
 		String getId();
 	}
 
-	private void showPublishResult(String message, GraphObject result,
-			FacebookRequestError error) {
-		String title = null;
-		String alertMessage = null;
+	private void showPublishResult(String message, GraphObject result, FacebookRequestError error) {
+		String title = null, alertMessage = null;
+		
 		if (error == null) {
 			title = "sucess";
 			String id = result.cast(GraphObjectWithId.class).getId();
@@ -252,8 +240,7 @@ public class DisplayTweetInfo extends Activity {
 			alertMessage = error.getErrorMessage();
 		}
 
-		new AlertDialog.Builder(this).setTitle(title).setMessage(alertMessage)
-				.setPositiveButton("ok", null).show();
+		new AlertDialog.Builder(this).setTitle(title).setMessage(alertMessage).setPositiveButton("ok", null).show();
 	}
 
 	private void onClickPostStatusUpdate() {
@@ -264,15 +251,11 @@ public class DisplayTweetInfo extends Activity {
 		if (hasPublishPermission()) {
 
 			Bundle parameters = new Bundle();
-			Bitmap image = BitmapFactory.decodeResource(this.getResources(),
-					R.drawable.com_facebook_icon);
-
 			Request request = new Request();
-			if (image != null) {
+			if (bm != null) {
 
 				parameters.putByteArray("picture", imageBytes);
-				request = Request.newUploadPhotoRequest(
-						Session.getActiveSession(), bm, new Request.Callback() {
+				request = Request.newUploadPhotoRequest( Session.getActiveSession(), bm, new Request.Callback() {
 							@Override
 							public void onCompleted(Response response) {
 								showPublishResult("post photo",
@@ -285,13 +268,10 @@ public class DisplayTweetInfo extends Activity {
 			} else {
 
 				request = Request.newStatusUpdateRequest(
-						Session.getActiveSession(), message,
-						new Request.Callback() {
+						Session.getActiveSession(), message, new Request.Callback() {
 							@Override
 							public void onCompleted(Response response) {
-								showPublishResult(message,
-										response.getGraphObject(),
-										response.getError());
+								showPublishResult(message, response.getGraphObject(), response.getError());
 							}
 						});
 			}
@@ -313,46 +293,10 @@ public class DisplayTweetInfo extends Activity {
 		if (session != null) {
 			pendingAction = action;
 			if (hasPublishPermission()) {
-				// We can do the action right away.
 				handlePendingAction();
 			} else {
-				// We need to get new permissions, then complete the action when
-				// we get called back.
 				session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
 			}
 		}
 	}
-	
-	
-	public class SendTweetTask extends AsyncTask<String, Void, Boolean> {
-
-		@Override
-		protected Boolean doInBackground(String... params) {
-			try {
-				
-				//TODO: images on responses
-				Utils.SendResponseTweet(params[0], MainMenu.user, null, conversationID);
-				return true;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return false;
-		}
-		
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if (result) {
-				Log.d("Paulo", "Do in backgroud executed correctly");
-				finish();
-				startActivity(getIntent());
-				
-			} else {
-				Log.d("Paulo", "Do in backgroud executed incorrectly");
-			}
-		}
-	
-	}
-
-
 }

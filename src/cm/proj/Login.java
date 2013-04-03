@@ -32,7 +32,6 @@ public class Login extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.login, menu);
 		return true;
 	}
@@ -42,7 +41,6 @@ public class Login extends Activity {
 		try {
 			socket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		super.onDestroy();
@@ -51,9 +49,7 @@ public class Login extends Activity {
 
 	public void register(View view) {
 
-		String input = ((EditText) findViewById(R.id.userString)).getText()
-				.toString();
-
+		String input = ((EditText) findViewById(R.id.userString)).getText().toString();
 		NetworkTask task = new NetworkTask(input, this);
 		task.execute();
 
@@ -62,11 +58,11 @@ public class Login extends Activity {
 	public class NetworkTask extends AsyncTask<Void, Void, Boolean> {
 		ObjectOutputStream oos;
 		ObjectInputStream ois;
-		String input;
+		String user;
 		Activity activity;
 
 		public NetworkTask(String _input, Login login) {
-			input = _input;
+			user = _input;
 			activity = login;
 		}
 
@@ -74,7 +70,7 @@ public class Login extends Activity {
 		protected void onPostExecute(Boolean result) {
 			if (result) {
 				Intent i = new Intent(activity, MainMenu.class);
-				i.putExtra("user", input);
+				i.putExtra("user", user);
 				startActivity(i);
 
 				Intent service = new Intent(activity, TweetReceiving.class);
@@ -94,7 +90,7 @@ public class Login extends Activity {
 			try {
 
 				socket = new Socket("10.0.2.2", 8081); // connect to // server
-				UserNameDto info = new UserNameDto(input);
+				UserNameDto info = new UserNameDto(user);
 
 				oos = new ObjectOutputStream(socket.getOutputStream());
 				oos.writeObject(info);

@@ -219,7 +219,6 @@ containing a value of this type.
         public static final int button1=0x7f040012;
         public static final int button2=0x7f04000f;
         public static final int button3=0x7f040013;
-        public static final int button4=0x7f040014;
         public static final int com_facebook_login_activity_progress_bar=0x7f040017;
         public static final int com_facebook_picker_activity_circle=0x7f040016;
         public static final int com_facebook_picker_checkbox=0x7f040019;
@@ -241,6 +240,7 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f040028;
         public static final int displayTweetInfoImageView=0x7f040008;
         public static final int displayTweetText=0x7f040007;
+        public static final int galleryButton=0x7f040014;
         public static final int greeting=0x7f040009;
         public static final int large=0x7f040002;
         public static final int list=0x7f040003;

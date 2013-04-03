@@ -13,8 +13,6 @@ import dto.TweetDto;
 
 public class TweetReceiving extends Service {
 
-// This is the object that receives interactions from clients.  See
-// RemoteService for a more complete example.
 	private final IBinder mBinder = new LocalBinder();
 	ArrayList<TweetDto> tweets = new ArrayList<TweetDto>();
 
@@ -25,17 +23,16 @@ public class TweetReceiving extends Service {
 		return Service.START_NOT_STICKY;
 	}
 
-	 public class LocalBinder extends Binder {
-	        TweetReceiving getService() {
-	            return TweetReceiving.this;
-	        }
-	    }
+	public class LocalBinder extends Binder {
+		TweetReceiving getService() {
+			return TweetReceiving.this;
+		}
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
 	}
-	
 
 	public class ReceiveTweetTask extends AsyncTask<String, Void, Boolean> {
 

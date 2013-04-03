@@ -72,7 +72,6 @@ int id analogClock1 0x7f040010
 int id button1 0x7f040012
 int id button2 0x7f04000f
 int id button3 0x7f040013
-int id button4 0x7f040014
 int id com_facebook_login_activity_progress_bar 0x7f040017
 int id com_facebook_picker_activity_circle 0x7f040016
 int id com_facebook_picker_checkbox 0x7f040019
@@ -94,6 +93,7 @@ int id com_facebook_usersettingsfragment_logo_image 0x7f040027
 int id com_facebook_usersettingsfragment_profile_name 0x7f040028
 int id displayTweetInfoImageView 0x7f040008
 int id displayTweetText 0x7f040007
+int id galleryButton 0x7f040014
 int id greeting 0x7f040009
 int id large 0x7f040002
 int id list 0x7f040003
