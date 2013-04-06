@@ -35,7 +35,7 @@
         </activity>
 
         <service
-            android:name="cm.proj.TweetReceiving"
+            android:name="cm.proj.NetworkManagerService"
             android:label="@string/service_name" >
         </service>
 

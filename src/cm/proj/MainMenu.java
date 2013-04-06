@@ -1,18 +1,13 @@
 package cm.proj;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -24,13 +19,9 @@ import com.example.android_test.R;
 public class MainMenu extends Activity {
 
 	static final String EXTRA_MESSAGE = "com.example.MainActivity.MESSAGE";
-	static Socket socket;
-	static ObjectInputStream ois;
-	static ObjectOutputStream oos;
-	boolean mIsBound;
-	static TweetReceiving mBoundService;
-	static String user = "";
 	byte[] image = null;
+	String user = UserData.getUser();
+	static Messenger mService = UserData.getBoundedMessenger();
 
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100,
 			RESULT_LOAD_IMAGE = 10;
@@ -39,14 +30,6 @@ public class MainMenu extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		Intent iin = getIntent();
-		Bundle b = iin.getExtras();
-		if (b.get("user") != null) {
-			user = (String) b.get("user");
-		}
-
-		doBindService();
 		Log.d("Paulo", "binded");
 	}
 
@@ -63,18 +46,24 @@ public class MainMenu extends Activity {
 	}
 
 	public void sendTweet(View view) {
-		String input = ((EditText) findViewById(R.id.tweetString)).getText().toString();
-		SendTweetTask task = new SendTweetTask(input, user, image);
-		task.execute();
+		 String tweet = ((EditText) findViewById(R.id.tweetString)).getText().toString();
 
-		image = null;
-		((EditText) findViewById(R.id.tweetString)).getText().clear();
-	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		doUnbindService();
+		try {
+			Bundle b = new Bundle();
+			b.putString("tweet", tweet);
+			b.putByteArray("image", image);
+			b.putString("user", user);
+			Message msg = Message.obtain(null, NetworkManagerService.SEND_TWEET);
+			msg.setData(b);
+			mService.send(msg);
+
+			image = null;
+			((EditText) findViewById(R.id.tweetString)).getText().clear();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void displayTimeLine(View view) {
@@ -85,31 +74,6 @@ public class MainMenu extends Activity {
 	public void takePhoto(View view) {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-	}
-
-	private ServiceConnection mConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			mBoundService = ((TweetReceiving.LocalBinder) service).getService();
-			Log.d("Paulo", "Binding to Service done");
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			mBoundService = null;
-			Log.d("Paulo", "I am now unbinded from the Service");
-		}
-	};
-
-	void doBindService() {
-		bindService(new Intent(this, TweetReceiving.class), mConnection,
-				Context.BIND_AUTO_CREATE);
-		mIsBound = true;
-	}
-
-	void doUnbindService() {
-		if (mIsBound) {
-			unbindService(mConnection);
-			mIsBound = false;
-		}
 	}
 
 	@Override
@@ -125,7 +89,8 @@ public class MainMenu extends Activity {
 			switch (resultCode) {
 
 			case Activity.RESULT_OK:
-				image = Utils.convertBmpToBytes((Bitmap) data.getExtras().get("data"));
+				image = Utils.convertBmpToBytes((Bitmap) data.getExtras().get(
+						"data"));
 
 				new AlertDialog.Builder(this).setTitle(title)
 						.setMessage(title + " has been loaded sucessfully")

@@ -27,11 +27,11 @@ public class Utils {
 		return values;
 	}
 
-	public static ArrayList<TweetDto> retrieveTweetDtosSameID(	ArrayList<TweetDto> tweets, int id) {
+	public static ArrayList<TweetDto> retrieveTweetDtosSameID(	ArrayList<TweetDto> tweets, String id) {
 		ArrayList<TweetDto> conversation = new ArrayList<TweetDto>();
 		HashSet<String> conversationEntities = new HashSet<String>();
 		for (TweetDto dto : tweets) {
-			if (dto.getConversationID() == id){
+			if (dto.getConversationID().equalsIgnoreCase(id)){
 				conversation.add(dto);
 				for(String entity: dto.getReceivingEntities())
 					conversationEntities.add(entity);
@@ -52,24 +52,29 @@ public class Utils {
 		tweetDto.setTweet(tweet);
 		tweetDto.setSender(user);
 		tweetDto.setImage(image);
-		MainMenu.oos.writeObject(tweetDto);
-		MainMenu.oos.flush();
+		
+		//ID -> TimeStamp + User = Unique
+		tweetDto.setTweetId(System.currentTimeMillis() + user);
+		NetworkManagerService.oos.writeObject(tweetDto);
+		NetworkManagerService.oos.flush();
 
 	}
 
-	public static void SendResponseTweet(String tweet, String user, byte[] image, int id) throws IOException {
+	public static void SendResponseTweet(String tweet, String user, byte[] image, String id) throws IOException {
 		TweetDto tweetDto = new TweetDto();
 		tweetDto.setTweet(tweet);
 		tweetDto.setSender(user);
 		tweetDto.setImage(image);
+
+		tweetDto.setTweetId(System.currentTimeMillis() + user);
 		tweetDto.setConversationID(id);
 		
-		for(TweetDto dto : MainMenu.mBoundService.tweets) {
-			if(dto.getConversationID() == id)
+		for(TweetDto dto : NetworkManagerService.tweets) {
+			if(dto.getConversationID().equalsIgnoreCase(id))
 				tweetDto.getReceivingEntities().add("@" + dto.getSender());
 		}
-		MainMenu.oos.writeObject(tweetDto);
-		MainMenu.oos.flush();
+		NetworkManagerService.oos.writeObject(tweetDto);
+		NetworkManagerService.oos.flush();
 
 	}
 	

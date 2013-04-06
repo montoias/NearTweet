@@ -9,6 +9,9 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,7 +41,9 @@ import dto.TweetDto;
 
 public class DisplayTweetInfo extends Activity {
 
-	int position = 0, conversationID = 0;
+	TweetsDataSource dataSource;
+	int position = 0;
+	String conversationID;
 	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
 	private final String PENDING_ACTION_BUNDLE_KEY = "com.facebook.samples.hellofacebook:PendingAction";
 	private Button postStatusUpdateButton, responseTweetButton;
@@ -51,6 +56,8 @@ public class DisplayTweetInfo extends Activity {
 	String message = "";
 	byte[] imageBytes = null;
 	ArrayList<TweetDto> conversation, tweets;
+	Messenger mService = UserData.getBoundedMessenger();
+
 
 	private enum PendingAction { NONE, POST_TIMELINE }
 
@@ -89,18 +96,7 @@ public class DisplayTweetInfo extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_tweet_info);
 		Intent iin = getIntent();
-		Bundle b = iin.getExtras();
-		if (b.get("position") != null) {
-			
-			position = (Integer) b.get("position");
-			tweets = MainMenu.mBoundService.tweets;
-			conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
-			message = tweets.get(position).getTweet();
-			conversationID = tweets.get(position).getConversationID();
-			
-		} else {
-			throw new RuntimeException("Should have a position as argument");
-		}
+		InitializeData(iin.getExtras());
 
 		ListView listView = (ListView) findViewById(R.id.listTweetInfo);
 		String[] values = Utils.convertTweetToString(conversation);
@@ -144,8 +140,26 @@ public class DisplayTweetInfo extends Activity {
 		responseTweetButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				EditText et = (EditText)findViewById(R.id.responseTextTweet);
-				SendResponseTweetTask task = new SendResponseTweetTask(et.getText().toString(), MainMenu.user, null, conversationID);
-				task.execute();
+				
+				try {
+					Bundle b = new Bundle();
+					b.putString("tweet", et.getText().toString());
+					b.putByteArray("image", null);
+					b.putString("user", UserData.user);
+					b.putString("conversationId", conversationID);
+				
+					Message msg = Message.obtain(null, NetworkManagerService.SEND_RESPONSE_TWEET);
+					msg.setData(b);
+					mService.send(msg);
+
+					imageBytes = null;
+					et.getText().clear();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
 				
 				et.getText().clear();
 			}
@@ -153,6 +167,21 @@ public class DisplayTweetInfo extends Activity {
 		
 		displayTweetImage();
 
+	}
+
+	private void InitializeData(Bundle b) {
+		if (b.get("position") != null) {
+			dataSource = new TweetsDataSource(this);
+			dataSource.open();
+			tweets = dataSource.getAllTweets();
+			position = (Integer) b.get("position");
+			conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
+			message = tweets.get(position).getTweet();
+			conversationID = tweets.get(position).getConversationID();
+			
+		} else {
+			throw new RuntimeException("Should have a position as argument");
+		}
 	}
 
 	@Override
