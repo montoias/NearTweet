@@ -34,14 +34,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textIsSelectable="true" />
 
-    <ImageView
-        android:id="@+id/displayTweetInfoImageView"
-        android:layout_width="250dp"
-        android:layout_height="200dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/displayTweetText"
-        android:layout_marginRight="183dp" />
-
     <Button
         android:id="@+id/postStatusUpdateButton"
         android:layout_width="fill_parent"
@@ -84,9 +76,25 @@
         android:layout_alignLeft="@+id/responseTweetButton"
         android:layout_alignRight="@+id/responseTweetButton"
         android:layout_alignTop="@+id/profilePicture"
-        android:layout_marginLeft="47dp"
         android:ems="10" >
 
     </EditText>
+
+    <ImageView
+        android:id="@+id/displayTweetInfoImageView"
+        android:layout_width="250dp"
+        android:layout_height="200dp"
+        android:layout_alignTop="@+id/listTweetInfo"
+        android:layout_marginLeft="198dp"
+        android:layout_marginTop="50dp"
+        android:layout_toRightOf="@+id/listTweetInfo" />
+
+    <TextView
+        android:id="@+id/DisplayLocation"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_alignRight="@+id/responseTextTweet"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="38dp" />
 
 </RelativeLayout>

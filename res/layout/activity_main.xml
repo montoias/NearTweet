@@ -8,49 +8,108 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainMenu" >
 
-    <EditText
-        android:id="@+id/tweetString"
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/edit_message" />
+        android:layout_alignLeft="@+id/tweetString"
+        android:layout_below="@+id/tweetString"
+        android:layout_marginTop="42dp"
+        android:text="@string/multimediaOptions" />
 
-    <Button
-        android:id="@+id/button1"
+    <CheckBox
+        android:id="@+id/GPS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/tweetString"
-        android:layout_marginLeft="110dp"
-        android:layout_toRightOf="@+id/tweetString"
-        android:onClick="sendTweet"
-        android:text="@string/Tweet" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/button2"
-        android:layout_below="@+id/button2"
-        android:layout_marginTop="52dp"
-        android:onClick="displayTimeLine"
-        android:text="@string/DisplayTimeLine" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
-        android:layout_toLeftOf="@+id/button1"
-        android:onClick="takePhoto"
-        android:text="Camera" />
+        android:layout_alignBaseline="@+id/PrivateTweet"
+        android:layout_alignBottom="@+id/PrivateTweet"
+        android:layout_marginLeft="44dp"
+        android:layout_toRightOf="@+id/PrivateTweet"
+        android:onClick="displayMyLocation"
+        android:text="@string/gps" />
 
     <Button
         android:id="@+id/galleryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button3"
-        android:layout_alignBottom="@+id/button3"
-        android:layout_toRightOf="@+id/button2"
-        android:text="Gallery" 
-        android:onClick="galleryPhoto" />
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="32dp"
+        android:onClick="galleryPhoto"
+        android:text="Gallery" />
+
+    <CheckBox
+        android:id="@+id/PrivateTweet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="33dp"
+        android:onClick="privateTweets"
+        android:text="@string/privateTweet" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/galleryButton"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="99dp"
+        android:onClick="displayTimeLine"
+        android:text="@string/DisplayTimeLine" />
+
+    <Button
+        android:id="@+id/camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/galleryButton"
+        android:layout_alignBottom="@+id/galleryButton"
+        android:layout_alignRight="@+id/GPS"
+        android:onClick="takePhoto"
+        android:text="Camera" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/galleryButton"
+        android:layout_marginTop="45dp"
+        android:layout_toLeftOf="@+id/GPS"
+        android:text="Privacy Settings: " />
+
+    <EditText
+        android:id="@+id/tweetString"
+        android:layout_width="350dp"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="115dp"
+        android:ems="10"
+        android:hint="@string/edit_message" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/WelcomeMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="27dp"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tweetString"
+        android:layout_alignBottom="@+id/tweetString"
+        android:layout_alignRight="@+id/WelcomeMessage"
+        android:layout_marginRight="63dp"
+        android:onClick="sendTweet"
+        android:text="@string/Tweet" />
 
 </RelativeLayout>

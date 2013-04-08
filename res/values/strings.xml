@@ -3,7 +3,7 @@
 
     <string name="app_name">NearTweet</string>
     <string name="action_settings">Settings</string>
-    <string name="edit_message"> Paulinho</string>
+    <string name="edit_message"> The Text You want to Tweet</string>
     <string name="Tweet">Tweet</string>
     <string name="title_activity_display_message">DisplayMessage</string>
     <string name="Register">Register on Server</string>
@@ -20,5 +20,8 @@
     <string name="hello_user">Hello %1$s!</string>
     <string name="title_activity_response_tweet">ResponseTweet</string>
     <string name="hello_world">Hello world!</string>
+    <string name="multimediaOptions">"Choose one of the following Multimedia options: "</string>
+    <string name="gps">GPS</string>
+    <string name="privateTweet">Priv Tweet</string>
 
 </resources>

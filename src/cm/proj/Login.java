@@ -76,6 +76,11 @@ public class Login extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+		
+		TweetsDataSource tds = new TweetsDataSource(this);
+		tds.open();
+		
+		UserData.setBd(tds);
 
 		// As soon as the program starts, put the Service running
 		Intent service = new Intent(this, NetworkManagerService.class);
@@ -94,12 +99,10 @@ public class Login extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		doUnbindService();
-
 	}
 
 	void doBindService() {
-		bindService(new Intent(this, NetworkManagerService.class), mConnection,
-				Context.BIND_AUTO_CREATE);
+		bindService(new Intent(this, NetworkManagerService.class), mConnection, Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}
 
@@ -135,8 +138,7 @@ public class Login extends Activity {
 		try {
 			Bundle b = new Bundle();
 			b.putString("user", user);
-			Message msg = Message.obtain(null,
-					NetworkManagerService.MSG_REGISTER_CLIENT);
+			Message msg = Message.obtain(null, NetworkManagerService.MSG_REGISTER_CLIENT);
 			msg.replyTo = mMessenger;
 			msg.setData(b);
 			mService.send(msg);
