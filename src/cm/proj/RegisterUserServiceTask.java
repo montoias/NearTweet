@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import secure.sms.spam.SpamFilter;
+
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -116,30 +118,47 @@ public class RegisterUserServiceTask {
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
+				SpamFilter spamFilter = new SpamFilter();
+				
 				while (true) {
 					Log.i("Paulo", "Cheguei");
 					TweetDto tweetDto;
+					String tweetMessage = Utils.convertTweetToString(tweetDto);
+					String sender = tweetDto.sender;
 					tweetDto = (TweetDto) NetworkManagerService.ois.readObject();
-
-					//Add to the DB
-					NetworkManagerService.dataSource.createTweet(tweetDto);
 					
-					//Update adapters
-					for(Messenger messenger: NetworkManagerService.updateAdapters.values()){
-						Log.d("Paulo", "size " + NetworkManagerService.updateAdapters.size());
-						Bundle b = new Bundle();
-						b.putString("tweet", Utils.convertTweetToString(tweetDto));
-						Message msgData = Message.obtain(null, NetworkManagerService.UPDATE_ADAPTER);
-						msgData.setData(b);
-						try {
-							messenger.send(msgData);
-						} catch (RemoteException e) {
-							e.printStackTrace();
+					if(!UserData.isSpammer(sender)){
+						
+						if(spamFilter.isSpam(tweetMessage)){
+							Log.d("Paulo", "Spam detected: " + tweetMessage);
+							UserData.addSpamInfraction(sender);
+							if(UserData.isSpammer(sender)){
+								Log.d("Paulo", "New spammer: " + sender);
+								continue;
+							}
 						}
+						//Add to the DB
+						NetworkManagerService.dataSource.createTweet(tweetDto);
+						
+						//Update adapters
+						for(Messenger messenger: NetworkManagerService.updateAdapters.values()){
+							Log.d("Paulo", "size " + NetworkManagerService.updateAdapters.size());
+							Bundle b = new Bundle();
+							
+							b.putString("tweet", tweetMessage);
+							Message msgData = Message.obtain(null, NetworkManagerService.UPDATE_ADAPTER);
+							msgData.setData(b);
+							try {
+								messenger.send(msgData);
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+						}
+						Log.i("Paulo", NetworkManagerService.dataSource.toString());
 					}
+					else
+						Log.d("Paulo", "Spam infractor: " + sender);
 					
-					
-					Log.i("Paulo", NetworkManagerService.dataSource.toString());
 				}
 
 			} catch (IOException e) {
