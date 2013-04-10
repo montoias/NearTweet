@@ -102,7 +102,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/add_answer_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tweetString"
@@ -111,5 +111,15 @@
         android:layout_marginRight="63dp"
         android:onClick="sendTweet"
         android:text="@string/Tweet" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tweetString"
+        android:layout_alignLeft="@+id/add_answer_button"
+        android:layout_alignRight="@+id/add_answer_button"
+        android:onClick="startPoll"
+        android:text="Poll" />
 
 </RelativeLayout>

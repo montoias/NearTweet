@@ -23,5 +23,6 @@
     <string name="multimediaOptions">"Choose one of the following Multimedia options: "</string>
     <string name="gps">GPS</string>
     <string name="privateTweet">Priv Tweet</string>
+    <string name="title_activity_poll">PollActivity</string>
 
 </resources>
