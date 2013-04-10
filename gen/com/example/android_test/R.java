@@ -212,6 +212,7 @@ containing a value of this type.
         public static final int com_facebook_top_button=0x7f02001d;
         public static final int com_facebook_usersettingsfragment_background_gradient=0x7f02001e;
         public static final int ic_launcher=0x7f02001f;
+        public static final int neartweet=0x7f020020;
     }
     public static final class id {
         public static final int DisplayLocation=0x7f04000d;
@@ -219,7 +220,6 @@ containing a value of this type.
         public static final int PrivateTweet=0x7f040015;
         public static final int WelcomeMessage=0x7f040019;
         public static final int action_settings=0x7f040030;
-        public static final int analogClock1=0x7f040011;
         public static final int button1=0x7f04001a;
         public static final int button2=0x7f040010;
         public static final int camera=0x7f040018;
@@ -246,6 +246,7 @@ containing a value of this type.
         public static final int displayTweetText=0x7f040007;
         public static final int galleryButton=0x7f040016;
         public static final int greeting=0x7f040008;
+        public static final int imageView1=0x7f040011;
         public static final int large=0x7f040002;
         public static final int list=0x7f040003;
         public static final int listTweetInfo=0x7f040009;

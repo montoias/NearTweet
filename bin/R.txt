@@ -67,12 +67,12 @@ int drawable com_facebook_top_background 0x7f02001c
 int drawable com_facebook_top_button 0x7f02001d
 int drawable com_facebook_usersettingsfragment_background_gradient 0x7f02001e
 int drawable ic_launcher 0x7f02001f
+int drawable neartweet 0x7f020020
 int id DisplayLocation 0x7f04000d
 int id GPS 0x7f040014
 int id PrivateTweet 0x7f040015
 int id WelcomeMessage 0x7f040019
 int id action_settings 0x7f040030
-int id analogClock1 0x7f040011
 int id button1 0x7f04001a
 int id button2 0x7f040010
 int id camera 0x7f040018
@@ -99,6 +99,7 @@ int id displayTweetInfoImageView 0x7f04000b
 int id displayTweetText 0x7f040007
 int id galleryButton 0x7f040016
 int id greeting 0x7f040008
+int id imageView1 0x7f040011
 int id large 0x7f040002
 int id list 0x7f040003
 int id listTweetInfo 0x7f040009

@@ -34,15 +34,12 @@ public class TimeLine extends Activity {
 			case NetworkManagerService.UPDATE_ADAPTER:
 				Log.d("Paulo","TimeLine: mensagem" + msg.getData().getString("tweet"));
 				drawTimeLine();
-				// adapter.insert(msg.getData().getString("tweet"),0);
-				// adapter.notifyDataSetChanged();
 				break;
 
 			default:
 				super.handleMessage(msg);
 			}
 		}
-
 	}
 
 	public void drawTimeLine() {
