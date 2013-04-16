@@ -73,7 +73,7 @@ public class PollActivity extends Activity {
 
 			b.putString("user", UserData.user);
 			b.putInt("poll", TweetDto.TYPE_POLL);
-			b.putString("tweet", ((EditText)findViewById(R.id.question)).getText().toString());
+			b.putString("tweet", "Poll: " + ((EditText)findViewById(R.id.question)).getText().toString());
 			b.putStringArrayList("answers", answers);
 
 			Message msg = Message.obtain(null, NetworkManagerService.SEND_POLL);

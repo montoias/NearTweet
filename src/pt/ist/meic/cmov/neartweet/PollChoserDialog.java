@@ -11,11 +11,12 @@ import android.os.Bundle;
 
 public class PollChoserDialog extends DialogFragment {
 
-	String sender;
+	String question;
+	String asker;
 	ArrayList<String> answers;
 
 	public interface PollChoserListener {
-		public void onDialogChoice(DialogFragment dialog, String answer, String sender);
+		public void onDialogChoice(DialogFragment dialog, String answer);
 	}
 
 	PollChoserListener mListener;
@@ -28,8 +29,11 @@ public class PollChoserDialog extends DialogFragment {
 		super.onAttach(activity);
 		
 		Bundle b = getArguments();
-		sender = b.getString("sender");
+		question = b.getString("question");
+		asker = b.getString("asker");
 		answers = b.getStringArrayList("answers");
+		
+		question = asker + " asks:" + question.substring(5);
 		
 		try{
 			mListener = (PollChoserListener) activity;
@@ -41,12 +45,12 @@ public class PollChoserDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle("Choose your answer")
+		builder.setTitle(question)
 		.setItems(answers.toArray(new CharSequence[answers.size()]), new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mListener.onDialogChoice(PollChoserDialog.this, answers.get(which), sender);
+				mListener.onDialogChoice(PollChoserDialog.this, answers.get(which));
 			}
 		});
 		return builder.create();

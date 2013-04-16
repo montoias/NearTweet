@@ -22,7 +22,8 @@ public class Utils {
 		
 		ArrayList<String> values = new ArrayList<String>();
 		for (int i = 0; i < tweets.size(); i++) {
-			values.add(convertTweetToString(tweets.get(i)));
+//			if(!(tweets.get(i).getType() == TweetDto.TYPE_POLL_ANSWER))
+				values.add(convertTweetToString(tweets.get(i)));
 		}
 		return values;
 	}
@@ -42,8 +43,9 @@ public class Utils {
 		for (TweetDto dto : tweets) {
 			if (dto.getConversationID().equalsIgnoreCase(id)){
 				conversation.add(dto);
-				for(String entity: dto.getReceivingEntities())
-					conversationEntities.add(entity);
+				if(dto.getReceivingEntities() != null)
+					for(String entity: dto.getReceivingEntities())
+						conversationEntities.add(entity);
 			}
 		}
 		
@@ -70,22 +72,25 @@ public class Utils {
 
 	}
 
-	public static void SendResponseTweet(String tweet, String user, byte[] image, String id, boolean privacy) throws IOException {
+	public static void SendResponseTweet(String tweet, String user, byte[] image, String id, boolean privacy, boolean isPollAnswer, String asker) throws IOException {
 		TweetDto tweetDto = new TweetDto();
 		tweetDto.setTweet(tweet);
 		tweetDto.setSender(user);
 		tweetDto.setImage(image);
-
-		tweetDto.setTweetId(System.currentTimeMillis() + user);
+		if(isPollAnswer) {
+			tweetDto.setType(TweetDto.TYPE_POLL_ANSWER);
+			tweetDto.setTweetId(System.currentTimeMillis() + user + " " + asker);
+		} else
+			tweetDto.setTweetId(System.currentTimeMillis() + user);
 		tweetDto.setConversationID(id);
 		tweetDto.setPrivacy(privacy);
 		
 		if(privacy){
 			for(TweetDto dto : retrieveTweetDtosSameID(NetworkManagerService.dataSource.getAllTweets(), id)) {
-				tweetDto.getReceivingEntities().add("@" + dto.getSender());
+				tweetDto.addReceivingEntities("@" + dto.getSender());
 			}
 			//Add myself to the list
-			tweetDto.getReceivingEntities().add("@" + user);
+			tweetDto.addReceivingEntities("@" + user);
 		}
 		
 		NetworkManagerService.oos.writeObject(tweetDto);
@@ -99,10 +104,15 @@ public class Utils {
 		tweetDto.setType(TweetDto.TYPE_POLL);
 		tweetDto.setSender(user);
 		tweetDto.setAnswers(answers);
+		tweetDto.setImage(null);
+		tweetDto.setPrivacy(false);
+		tweetDto.setLocation(null);
 
 		tweetDto.setTweetId(System.currentTimeMillis() + user);
 		NetworkManagerService.oos.writeObject(tweetDto);
 		NetworkManagerService.oos.flush();
+		
+		TimeLine.pollResultsChart.addNewPoll(tweetDto.getTweetId(), new ArrayList<String>(answers));
 	}
 	
 	public static byte[] convertBmpToBytes(Bitmap bmp) {

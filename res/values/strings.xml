@@ -24,5 +24,6 @@
     <string name="gps">GPS</string>
     <string name="privateTweet">Priv Tweet</string>
     <string name="title_activity_poll">PollActivity</string>
+    <string name="title_activity_poll_results">PollResultsActivity</string>
 
 </resources>

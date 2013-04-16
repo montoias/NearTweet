@@ -297,18 +297,19 @@ containing a value of this type.
         public static final int login=0x7f090003;
         public static final int main=0x7f090004;
         public static final int poll=0x7f090005;
-        public static final int post_on_facebook=0x7f090006;
-        public static final int response_tweet=0x7f090007;
+        public static final int poll_results=0x7f090006;
+        public static final int post_on_facebook=0x7f090007;
+        public static final int response_tweet=0x7f090008;
     }
     public static final class string {
         public static final int DisplayTimeLine=0x7f050023;
         public static final int Register=0x7f05001e;
         public static final int Tweet=0x7f05001c;
         public static final int TweetImage=0x7f050025;
-        public static final int action_forgot_password=0x7f050035;
+        public static final int action_forgot_password=0x7f050036;
         public static final int action_settings=0x7f05001a;
-        public static final int action_sign_in_register=0x7f050033;
-        public static final int action_sign_in_short=0x7f050034;
+        public static final int action_sign_in_register=0x7f050034;
+        public static final int action_sign_in_short=0x7f050035;
         public static final int app_id=0x7f050028;
         public static final int app_name=0x7f050019;
         public static final int com_facebook_choose_friends=0x7f05000f;
@@ -337,29 +338,30 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_logged_in=0x7f050009;
         public static final int com_facebook_usersettingsfragment_not_logged_in=0x7f05000a;
         public static final int edit_message=0x7f05001b;
-        public static final int error_field_required=0x7f05003a;
-        public static final int error_incorrect_password=0x7f050039;
-        public static final int error_invalid_email=0x7f050037;
-        public static final int error_invalid_password=0x7f050038;
+        public static final int error_field_required=0x7f05003b;
+        public static final int error_incorrect_password=0x7f05003a;
+        public static final int error_invalid_email=0x7f050038;
+        public static final int error_invalid_password=0x7f050039;
         public static final int gps=0x7f05002d;
         public static final int hello_user=0x7f050029;
         public static final int hello_world=0x7f05002b;
         public static final int login_password=0x7f050020;
-        public static final int login_progress_signing_in=0x7f050036;
+        public static final int login_progress_signing_in=0x7f050037;
         public static final int login_user=0x7f05001f;
         public static final int multimediaOptions=0x7f05002c;
         public static final int privateTweet=0x7f05002e;
         /**  Strings related to login 
          */
-        public static final int prompt_email=0x7f050031;
-        public static final int prompt_password=0x7f050032;
+        public static final int prompt_email=0x7f050032;
+        public static final int prompt_password=0x7f050033;
         public static final int publishFacebook=0x7f050026;
         public static final int service_name=0x7f050021;
         public static final int title_activity_display_message=0x7f05001d;
         public static final int title_activity_display_time_line=0x7f050022;
         public static final int title_activity_display_tweet_info=0x7f050024;
-        public static final int title_activity_login=0x7f050030;
+        public static final int title_activity_login=0x7f050031;
         public static final int title_activity_poll=0x7f05002f;
+        public static final int title_activity_poll_results=0x7f050030;
         public static final int title_activity_post_on_facebook=0x7f050027;
         public static final int title_activity_response_tweet=0x7f05002a;
     }

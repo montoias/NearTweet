@@ -69,16 +69,17 @@ public class DisplayTweetInfo extends Activity {
 
 	class IncomingHandler extends Handler {
 		@Override
-		public void handleMessage(Message msg) {
+		public void handleMessage(Message msg) {	//TODO: Broken: Tweets after polls no longer show here even if from same conversation
 			switch (msg.what) {
 			case NetworkManagerService.UPDATE_ADAPTER:
-				Log.d("Paulo", "TimeLine: mensagem" + msg.getData().getString("tweet"));
-				tweets = dataSource.getAllTweets();
-				conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
-				// Need to reverse the tweets in order to show the conversation
-				Collections.reverse(conversation);
+//				Log.d("Paulo", "TimeLine: mensagem" + msg.getData().getString("tweet"));
+//				tweets = dataSource.getAllTweets();
+//				conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
+//				// Need to reverse the tweets in order to show the conversation
+//				Collections.reverse(conversation);
 
-				adapter.add("\t" + msg.getData().getString("tweet"));
+				if(!(msg.getData().getInt("type") == TweetDto.TYPE_POLL))
+					adapter.add("\t" + msg.getData().getString("tweet"));
 				adapter.notifyDataSetChanged();
 				break;
 

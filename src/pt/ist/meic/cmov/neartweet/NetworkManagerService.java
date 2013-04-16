@@ -85,7 +85,9 @@ public class NetworkManagerService extends Service {
 				tweet = msg.getData().getString("tweet");
 				String conversationId = msg.getData().getString("conversationId");
 				privacy = msg.getData().getBoolean("privacy");
-				SendResponseTweetTask srtt = new SendResponseTweetTask(tweet, user, image, conversationId, privacy);
+				boolean isPollAnswer = msg.getData().getBoolean("isPollAnswer");
+				String asker = msg.getData().getString("asker");
+				SendResponseTweetTask srtt = new SendResponseTweetTask(tweet, user, image, conversationId, privacy, isPollAnswer, asker);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 					srtt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
 				else

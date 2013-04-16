@@ -139,12 +139,19 @@ public class RegisterUserServiceTask {
 						//Add to the DB
 						NetworkManagerService.dataSource.createTweet(tweetDto);
 						
+						if(tweetDto.getType() == TweetDto.TYPE_POLL_ANSWER && ((tweetDto.getTweetId().split(" "))[1]).equals(UserData.user)) {
+							Log.d("Paulo", "Tweet of type " + tweetDto.getType() + " received from " + (tweetDto.getTweetId().split(" "))[1]);
+							TimeLine.pollResultsChart.updateCounter(tweetDto.getConversationID(), tweetMessage.substring(tweetMessage.indexOf(' ') + 1));
+						}
+						
 						//Update adapters
 						for(Messenger messenger: NetworkManagerService.updateAdapters.values()){
 							Log.d("Paulo", "size " + NetworkManagerService.updateAdapters.size());
 							Bundle b = new Bundle();
 							
 							b.putString("tweet", tweetMessage);
+							b.putInt("type", tweetDto.getType());
+							b.putString("id", tweetDto.getConversationID());
 							Message msgData = Message.obtain(null, NetworkManagerService.UPDATE_ADAPTER);
 							msgData.setData(b);
 							try {

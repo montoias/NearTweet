@@ -73,6 +73,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cm.proj.MainMenu" />
         </activity>
+        <activity 
+            android:name="pt.ist.meic.cmov.neartweet.PollResultsChart">
+        </activity>
+        <activity android:name="org.achartengine.GraphicalActivity" />
     </application>
 
 </manifest>

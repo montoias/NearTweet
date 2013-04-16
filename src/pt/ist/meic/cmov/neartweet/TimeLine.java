@@ -32,6 +32,7 @@ public class TimeLine extends Activity implements PollChoserListener {
 	ArrayAdapter<String> adapter;
 	static Messenger mService = UserData.getBoundedMessenger();
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	static PollResultsChart pollResultsChart = new PollResultsChart();
 
 	class IncomingHandler extends Handler {
 		@Override
@@ -39,7 +40,7 @@ public class TimeLine extends Activity implements PollChoserListener {
 			switch (msg.what) {
 			case NetworkManagerService.UPDATE_ADAPTER:
 				Log.d("Paulo","TimeLine: mensagem" + msg.getData().getString("tweet"));
-				drawTimeLine();
+				drawTimeLine();			//TODO: redraws everything every time, add to adapter and use adapter notify
 				break;
 
 			default:
@@ -94,8 +95,16 @@ public class TimeLine extends Activity implements PollChoserListener {
 					int position, long id) {
 				TweetDto tweet = dataSource.getAllTweets().get(position);
 				if(tweet.getType() == TweetDto.TYPE_POLL) {
-					Toast.makeText(getBaseContext(), "Tweet is a poll", Toast.LENGTH_LONG).show();
-					showPollChoserDialog(tweet);
+					if(tweet.getSender().equals(UserData.user)) {
+						Intent i = pollResultsChart.execute(TimeLine.this, tweet.getTweetId(), tweet.getTweet());
+//						Intent i = pollResultsChart.execute(TimeLine.this);
+						startActivity(i);
+					} else if(!tweet.isPollAnswered()) { //TODO: tweets are not being marked as answered
+						Log.d("Paulo", "Answering tweet " + tweet.getTweetId());
+						showPollChoserDialog(tweet);
+					}
+					else
+						Toast.makeText(TimeLine.this, "Poll already answered", Toast.LENGTH_LONG).show();
 				} else {					
 					Intent i = new Intent(getBaseContext(), DisplayTweetInfo.class);
 					i.putExtra("position", position);
@@ -107,7 +116,10 @@ public class TimeLine extends Activity implements PollChoserListener {
 	
 	public void showPollChoserDialog(TweetDto tweet) {
 		Bundle b = new Bundle();
-		b.putString("sender", tweet.getSender());
+		b.putString("question", tweet.getTweet());
+		b.putString("asker", tweet.getSender());
+		b.putString("conversationId", tweet.getConversationID());
+		b.putString("id", tweet.getTweetId());
 		b.putStringArrayList("answers", new ArrayList<String>(tweet.getAnswers()));
 		DialogFragment dialog = new PollChoserDialog();
 		dialog.setArguments(b);
@@ -115,8 +127,33 @@ public class TimeLine extends Activity implements PollChoserListener {
 	}
 	
 	@Override
-	public void onDialogChoice(DialogFragment dialog, String answer, String sender) {
+	public void onDialogChoice(DialogFragment dialog, String answer) {
 		Toast.makeText(this, "Answer: " + answer, Toast.LENGTH_LONG).show();
+		
+		try{	
+			Bundle info = dialog.getArguments();
+			String convId = info.getString("conversationId");
+			String id = info.getString("id");
+			Bundle b = new Bundle();
+			b.putString("tweet", answer);
+			b.putString("user", UserData.user);
+			b.putString("asker", info.getString("asker"));
+			b.putString("conversationId", convId);
+			b.putBoolean("privacy", true);
+			b.putBoolean("isPollAnswer", true);
+			Message msg = Message.obtain(null, NetworkManagerService.SEND_RESPONSE_TWEET);
+			msg.setData(b);
+			UserData.mService.send(msg);
+			ArrayList<TweetDto> tweets = dataSource.getAllTweets();
+			for(TweetDto tweet : tweets)
+				if(tweet.getTweetId().equals(id)) {
+					tweet.setPollAnswered();		//TODO: tweets are not being marked as answered
+					Log.d("Paulo", "Marking tweet " + tweet.getTweetId() + " as marked");
+//					break;
+				}
+		} catch(RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
