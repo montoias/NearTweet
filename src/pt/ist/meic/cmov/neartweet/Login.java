@@ -59,7 +59,7 @@ public class Login extends Activity {
 				.getBoolean("registerUserResult");
 
 		if (loginSucessfull) {
-			Intent i = new Intent(this, MainMenu.class);
+			Intent i = new Intent(this, FragmentMainMenu.class);
 			UserData.setUser(user);
 			startActivity(i);
 
@@ -76,11 +76,12 @@ public class Login extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		
+
 		TweetsDataSource tds = new TweetsDataSource(this);
 		tds.open();
 		
 		UserData.setBd(tds);
-
+		
 		// As soon as the program starts, put the Service running
 		Intent service = new Intent(this, NetworkManagerService.class);
 		startService(service);
@@ -122,8 +123,7 @@ public class Login extends Activity {
 
 	public void register(View view) {
 
-		user = ((EditText) findViewById(R.id.userString)).getText()
-				.toString();
+		user = ((EditText) findViewById(R.id.userString)).getText().toString();
 		if (!mIsBound) {
 			new AlertDialog.Builder(this)
 					.setTitle(" Service -- Error ")

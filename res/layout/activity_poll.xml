@@ -62,7 +62,6 @@
         android:layout_alignBaseline="@+id/answer"
         android:layout_alignBottom="@+id/answer"
         android:layout_centerHorizontal="true"
-        android:onClick="addAnswer"
         android:text="Add Answer" />
 
     <Button
@@ -71,7 +70,6 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/textView2"
         android:layout_alignRight="@+id/answer_list"
-        android:onClick="sendPoll"
         android:text="Start Poll" />
 
 </RelativeLayout>

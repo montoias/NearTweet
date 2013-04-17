@@ -2,10 +2,10 @@ package pt.ist.meic.cmov.neartweet;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
+import pt.ist.meic.cmov.neartweet.PollChoserDialog.PollChoserListener;
+import pt.ist.meic.cmov.neartweet.dto.TweetDto;
 import android.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +13,9 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -21,12 +23,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-import pt.ist.meic.cmov.neartweet.PollChoserDialog.PollChoserListener;
-import pt.ist.meic.cmov.neartweet.R;
-import pt.ist.meic.cmov.neartweet.dto.TweetDto;
-
-
-public class TimeLine extends Activity implements PollChoserListener {
+public class TimeLine extends Fragment implements PollChoserListener {
 	TweetsDataSource dataSource = UserData.getBd();
 	ListView listView;
 	ArrayAdapter<String> adapter;
@@ -51,16 +48,43 @@ public class TimeLine extends Activity implements PollChoserListener {
 
 	public void drawTimeLine() {
 
-		listView = (ListView) findViewById(R.id.list);
-		ArrayList<String> values = Utils.convertTweetsToString(dataSource
-				.getAllTweets());
-		adapter = new ArrayAdapter<String>(this,
+		listView = (ListView) getActivity().findViewById(R.id.list);
+		ArrayList<String> values = Utils.convertTweetsToString(dataSource.getAllTweets());
+		adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
 		listView.setAdapter(adapter);
 	}
+	
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_display_time_line, container, false);
+    }
+	
+	public void onStart() {
+        super.onStart();
+		drawTimeLine();
 
-	@Override
+		// Register on Service the adapter
+		try {
+
+			Bundle b = new Bundle();
+			b.putString("id", UserData.getUser() + "TimeLine");
+			Message msg = Message.obtain(null,
+					NetworkManagerService.REGISTER_TO_RECEIVE_UPDATES);
+			msg.setData(b);
+			msg.replyTo = mMessenger;
+			Log.d("Paulo", msg.replyTo.toString());
+			mService.send(msg);
+
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
+		displayTweet();
+        
+	}
+
+/*	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_time_line);
@@ -85,7 +109,7 @@ public class TimeLine extends Activity implements PollChoserListener {
 
 		displayTweet();
 	}
-
+*/
 	public void displayTweet() {
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -96,7 +120,7 @@ public class TimeLine extends Activity implements PollChoserListener {
 				TweetDto tweet = dataSource.getAllTweets().get(position);
 				if(tweet.getType() == TweetDto.TYPE_POLL) {
 					if(tweet.getSender().equals(UserData.user)) {
-						Intent i = pollResultsChart.execute(TimeLine.this, tweet.getTweetId(), tweet.getTweet());
+						Intent i = pollResultsChart.execute(getActivity(), tweet.getTweetId(), tweet.getTweet());
 //						Intent i = pollResultsChart.execute(TimeLine.this);
 						startActivity(i);
 					} else if(!tweet.isPollAnswered()) { //TODO: tweets are not being marked as answered
@@ -104,9 +128,9 @@ public class TimeLine extends Activity implements PollChoserListener {
 						showPollChoserDialog(tweet);
 					}
 					else
-						Toast.makeText(TimeLine.this, "Poll already answered", Toast.LENGTH_LONG).show();
+						Toast.makeText(getActivity(), "Poll already answered", Toast.LENGTH_LONG).show();
 				} else {					
-					Intent i = new Intent(getBaseContext(), DisplayTweetInfo.class);
+					Intent i = new Intent(getActivity(), DisplayTweetInfo.class);
 					i.putExtra("position", position);
 					startActivity(i);
 				}
@@ -123,12 +147,12 @@ public class TimeLine extends Activity implements PollChoserListener {
 		b.putStringArrayList("answers", new ArrayList<String>(tweet.getAnswers()));
 		DialogFragment dialog = new PollChoserDialog();
 		dialog.setArguments(b);
-		dialog.show(getFragmentManager(), "PollChoserFragment");
+		dialog.show(getActivity().getFragmentManager(), "PollChoserFragment");
 	}
 	
 	@Override
 	public void onDialogChoice(DialogFragment dialog, String answer) {
-		Toast.makeText(this, "Answer: " + answer, Toast.LENGTH_LONG).show();
+		Toast.makeText(getActivity(), "Answer: " + answer, Toast.LENGTH_LONG).show();
 		
 		try{	
 			Bundle info = dialog.getArguments();
@@ -157,7 +181,7 @@ public class TimeLine extends Activity implements PollChoserListener {
 	}
 
 	@Override
-	protected void onDestroy() {
+	public void onDestroy() {
 		super.onDestroy();
 		try {
 			Bundle b = new Bundle();

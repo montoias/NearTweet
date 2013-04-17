@@ -14,7 +14,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/neartweet"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -73,10 +73,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cm.proj.MainMenu" />
         </activity>
-        <activity 
-            android:name="pt.ist.meic.cmov.neartweet.PollResultsChart">
+        <activity android:name="pt.ist.meic.cmov.neartweet.PollResultsChart" >
         </activity>
         <activity android:name="org.achartengine.GraphicalActivity" />
+        <activity
+            android:name="pt.ist.meic.cmov.neartweet.FragmentMainMenu"
+            android:label="@string/title_activity_fragment_main_menu" >
+        </activity>
+        <activity
+            android:name="pt.ist.meic.cmov.neartweet.OptionsMenu"
+            android:label="@string/title_activity_options__menu" >
+        </activity>
+        <activity
+            android:name="pt.ist.meic.cmov.neartweet.TweetActivity"
+            android:label="@string/title_activity_tweet" >
+        </activity>
     </application>
 
 </manifest>

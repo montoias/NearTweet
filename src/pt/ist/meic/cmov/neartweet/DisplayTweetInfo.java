@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import pt.ist.meic.cmov.neartweet.dto.TweetDto;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -25,10 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-
-import pt.ist.meic.cmov.neartweet.R;
-import pt.ist.meic.cmov.neartweet.dto.TweetDto;
+import android.widget.Toast;
 
 import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookOperationCanceledException;
@@ -72,11 +70,14 @@ public class DisplayTweetInfo extends Activity {
 		public void handleMessage(Message msg) {	//TODO: Broken: Tweets after polls no longer show here even if from same conversation
 			switch (msg.what) {
 			case NetworkManagerService.UPDATE_ADAPTER:
+				Toast.makeText(DisplayTweetInfo.this, "displayTweetIngo- update Adapter", Toast.LENGTH_LONG).show();
+				Log.d("Paulo", "displayTweetIngo- update Adapter");
 //				Log.d("Paulo", "TimeLine: mensagem" + msg.getData().getString("tweet"));
-//				tweets = dataSource.getAllTweets();
-//				conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
-//				// Need to reverse the tweets in order to show the conversation
-//				Collections.reverse(conversation);
+				tweets = dataSource.getAllTweets();
+				conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
+
+				// Need to reverse the tweets in order to show the conversation
+				Collections.reverse(conversation);
 
 				if(!(msg.getData().getInt("type") == TweetDto.TYPE_POLL))
 					adapter.add("\t" + msg.getData().getString("tweet"));
@@ -116,8 +117,7 @@ public class DisplayTweetInfo extends Activity {
 						if (conversation.get(position).getImage() != null) {
 							imageBytes = conversation.get(position).getImage();
 							bm = Utils.convertBytesToBmp(imageBytes);
-							((ImageView) findViewById(R.id.displayTweetInfoImageView))
-									.setImageBitmap(bm);
+							((ImageView) findViewById(R.id.displayTweetInfoImageView)).setImageBitmap(bm);
 						}
 
 						message = conversation.get(position).getTweet();
@@ -142,6 +142,7 @@ public class DisplayTweetInfo extends Activity {
 
 		// Register on Service the adapter
 		try {
+			Log.d("Paulo", "registering adapter --- DISPLAY TWEET INFO");
 			Bundle b = new Bundle();
 			b.putString("id", UserData.getUser() + "displayTweetInfo");
 			Message msg = Message.obtain(null, NetworkManagerService.REGISTER_TO_RECEIVE_UPDATES);
@@ -155,7 +156,7 @@ public class DisplayTweetInfo extends Activity {
 
 		for (int i = 1; i < conversation.size(); i++)
 			values.set(i, "\t" + values.get(i));
-
+		
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);
 		listView.setAdapter(adapter);
 

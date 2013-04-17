@@ -1,69 +1,66 @@
 package pt.ist.meic.cmov.neartweet;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
-import pt.ist.meic.cmov.neartweet.R;
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
-
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.app.Activity;
-import android.view.Menu;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.support.v4.app.NavUtils;
 
-public class PollActivity extends Activity {
+public class PollActivity extends Fragment implements OnClickListener{
 	
 	private ArrayList<String> answers = new ArrayList<String>();
 	ArrayAdapter<String> adapter;
 	
 	static Messenger mService = UserData.getBoundedMessenger();
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_poll);
-		// Show the Up button in the action bar.
-		 adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, answers);
-		((ListView)findViewById(R.id.answer_list)).setAdapter(adapter);
+	
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, 	Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.activity_poll, container, false);
 	}
-
+	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.poll, menu);
-		return true;
+	public void onStart() {
+	    super.onStart();
+	    adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, answers);
+		((ListView) getActivity().findViewById(R.id.answer_list)).setAdapter(adapter);	
+		
+		Button tweet = (Button) getActivity().findViewById(R.id.add_answer_button);
+        tweet.setOnClickListener(this);
+        Button pool = (Button) getActivity().findViewById(R.id.send_poll_button);
+        pool.setOnClickListener(this);
+	    
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
-			NavUtils.navigateUpFromSameTask(this);
+			NavUtils.navigateUpFromSameTask(getActivity());
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
 	public void addAnswer(View view) {
-		String answer = ((EditText)findViewById(R.id.answer)).getText().toString();
+		String answer = ((EditText)getActivity().findViewById(R.id.answer)).getText().toString();
 		
-		((EditText)findViewById(R.id.answer)).getText().clear();
+		((EditText)getActivity().findViewById(R.id.answer)).getText().clear();
 		adapter.add(answer);
+		
 	}
 	
 	public void sendPoll(View view) {
@@ -73,7 +70,7 @@ public class PollActivity extends Activity {
 
 			b.putString("user", UserData.user);
 			b.putInt("poll", TweetDto.TYPE_POLL);
-			b.putString("tweet", "Poll: " + ((EditText)findViewById(R.id.question)).getText().toString());
+			b.putString("tweet", "Poll: " + ((EditText)getActivity().findViewById(R.id.question)).getText().toString());
 			b.putStringArrayList("answers", answers);
 
 			Message msg = Message.obtain(null, NetworkManagerService.SEND_POLL);
@@ -83,7 +80,21 @@ public class PollActivity extends Activity {
 			re.printStackTrace();
 		}
 		
-		finish();
+		getActivity().getSupportFragmentManager().popBackStack();
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+        case R.id.add_answer_button:
+        	Log.d("Paulo", "add_answer");
+        	addAnswer(v);
+        	break;
+        case R.id.send_poll_button:
+        	Log.d("Paulo", "send_poll");
+        	sendPoll(v);
+        	break;
+		}
 	}
 
 }

@@ -29,7 +29,7 @@ public class Utils {
 	}
 	
 	public static String convertTweetToString(TweetDto tweet) {
-		String tweetString = "@" + tweet.getSender() + " " + tweet.getTweet();
+		String tweetString = "From: @" + tweet.getSender() + "\n\n\t " + tweet.getTweet();
 		if (tweet.getImage() != null) {
 			tweetString += " attachment";
 		}

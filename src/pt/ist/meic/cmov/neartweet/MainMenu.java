@@ -38,6 +38,15 @@ public class MainMenu extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		//Make sure DM is Initialized.
+		if(UserData.getBd() == null) {
+			TweetsDataSource tds = new TweetsDataSource(this);
+			tds.open();
+			
+			UserData.setBd(tds);
+		}
+			
 		gps = new GPSTracker(MainMenu.this);
 
 		TextView tv = (TextView) findViewById(R.id.WelcomeMessage);

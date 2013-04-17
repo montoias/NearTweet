@@ -25,5 +25,8 @@
     <string name="privateTweet">Priv Tweet</string>
     <string name="title_activity_poll">PollActivity</string>
     <string name="title_activity_poll_results">PollResultsActivity</string>
+    <string name="title_activity_fragment_main_menu">FragmentMainMenu</string>
+    <string name="title_activity_options__menu">Options_Menu</string>
+    <string name="title_activity_tweet">TweetActivity</string>
 
 </resources>
