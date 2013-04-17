@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
 import pt.ist.meic.cmov.neartweet.dto.ResponseDto;
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
 import pt.ist.meic.cmov.neartweet.dto.UserNameDto;
-
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
