@@ -59,7 +59,7 @@ public class TweetActivity extends Fragment implements OnClickListener{
 //		getActivity().findViewById(R.id.GPS).setOnClickListener(this);
 		getActivity().findViewById(R.id.galleryButton).setOnClickListener(this);
 		getActivity().findViewById(R.id.camera).setOnClickListener(this);
-		getActivity().findViewById(R.id.add_answer_button).setOnClickListener(this);
+		getActivity().findViewById(R.id.tweet).setOnClickListener(this);
 		
 		
 	}
@@ -149,7 +149,7 @@ public class TweetActivity extends Fragment implements OnClickListener{
 			takePhoto(v);
 			break;
 
-		case R.id.add_answer_button:
+		case R.id.tweet:
 			Toast.makeText(getActivity(), "about to send tweet", Toast.LENGTH_LONG).show();
 			sendTweet(v);
 			break;	

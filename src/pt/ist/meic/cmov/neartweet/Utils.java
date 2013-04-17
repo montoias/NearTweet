@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 

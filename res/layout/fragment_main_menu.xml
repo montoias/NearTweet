@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:orientation="horizontal"
     android:baselineAligned="false" >
-
+    
     <FrameLayout
         android:id="@+id/options_menu"
         android:name="pt.ist.meic.cmov.neartweet.OptionsMenu"

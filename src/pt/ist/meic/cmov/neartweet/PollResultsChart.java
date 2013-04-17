@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import org.achartengine.ChartFactory;
-import org.achartengine.GraphicalActivity;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;

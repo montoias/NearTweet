@@ -113,7 +113,7 @@ public class DisplayTweetInfo extends Activity {
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View view,
 							int position, long id) {
-
+						
 						if (conversation.get(position).getImage() != null) {
 							imageBytes = conversation.get(position).getImage();
 							bm = Utils.convertBytesToBmp(imageBytes);
