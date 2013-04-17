@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="NearTweet" parent="android:Theme">
+
+    <item name="android:editTextStyle">@style/EditTextNearTweet</item>
+
+    <item name="android:checkboxStyle">@style/CheckBoxNearTweet</item>
+
+    <item name="android:buttonStyle">@style/ButtonNearTweet</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonNearTweet</item>
+
+    <item name="android:listViewStyle">@style/ListViewNearTweet</item>
+
+    <item name="android:listViewWhiteStyle">@style/ListViewNearTweet.White</item>
+
+    <item name="android:spinnerItemStyle">@style/SpinnerItemNearTweet</item>
+
+  </style>
+
+</resources>

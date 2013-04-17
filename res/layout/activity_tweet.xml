@@ -9,17 +9,17 @@
     tools:context=".TweetActivity" >
 
 <EditText
-        android:id="@+id/tweetString"
-        android:layout_width="fill_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="115dp"
-        android:ems="10"
-        android:hint="@string/edit_message" >
+    android:id="@+id/tweetString"
+    android:layout_width="fill_parent"
+    android:layout_height="200dp"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:layout_marginTop="115dp"
+    android:ems="10"
+    android:hint="@string/edit_message" >
 
-        <requestFocus />
-    </EditText>
+    <requestFocus />
+</EditText>
 
 <TextView
         android:id="@+id/textView2"
@@ -37,7 +37,6 @@
     android:layout_alignLeft="@+id/textView2"
     android:layout_below="@+id/textView2"
     android:layout_marginTop="112dp"
-    android:onClick="galleryPhoto"
     android:text="Gallery" />
 
 <Button
@@ -47,7 +46,6 @@
     android:layout_alignLeft="@+id/galleryButton"
     android:layout_below="@+id/textView2"
     android:layout_marginTop="39dp"
-    android:onClick="takePhoto"
     android:text="Camera" />
 
 <Button
@@ -57,7 +55,6 @@
     android:layout_alignLeft="@+id/galleryButton"
     android:layout_alignParentBottom="true"
     android:layout_marginBottom="49dp"
-    android:onClick="sendTweet"
     android:text="@string/Tweet" />
 
 <TextView

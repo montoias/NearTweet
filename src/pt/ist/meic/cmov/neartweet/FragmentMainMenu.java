@@ -26,5 +26,10 @@ public class FragmentMainMenu extends FragmentActivity {
 		getMenuInflater().inflate(R.menu.fragment_main_menu, menu);
 		return true;
 	}
+	
+    protected void onDestroy() {        
+        super.onDestroy();
+        UserData.getBd().onDestroy();
+    }
 
 }

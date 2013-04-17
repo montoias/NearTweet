@@ -1,6 +1,5 @@
 package pt.ist.meic.cmov.neartweet;
 
-import pt.ist.meic.cmov.neartweet.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;

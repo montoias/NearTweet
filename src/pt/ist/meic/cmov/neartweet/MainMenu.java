@@ -1,29 +1,10 @@
 package pt.ist.meic.cmov.neartweet;
 
-import pt.ist.meic.cmov.neartweet.R;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Menu;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainMenu extends Activity {
 
-	static final String EXTRA_MESSAGE = "com.example.MainActivity.MESSAGE";
+	/*static final String EXTRA_MESSAGE = "com.example.MainActivity.MESSAGE";
 	byte[] image = null;
 	String user = UserData.getUser();
 	static Messenger mService = UserData.getBoundedMessenger();
@@ -225,4 +206,4 @@ public class MainMenu extends Activity {
 //        UserData.getBd().close();
         UserData.getBd().onDestroy();
     }
-}
+*/}

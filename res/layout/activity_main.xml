@@ -7,7 +7,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainMenu" >
-
+<!-- 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
@@ -109,7 +109,6 @@
         android:layout_alignBottom="@+id/tweetString"
         android:layout_alignRight="@+id/WelcomeMessage"
         android:layout_marginRight="63dp"
-        android:onClick="sendTweet"
         android:text="@string/Tweet" />
 
     <Button
@@ -119,7 +118,6 @@
         android:layout_alignBottom="@+id/tweetString"
         android:layout_alignLeft="@+id/add_answer_button"
         android:layout_alignRight="@+id/add_answer_button"
-        android:onClick="startPoll"
         android:text="Poll" />
-
+ -->
 </RelativeLayout>

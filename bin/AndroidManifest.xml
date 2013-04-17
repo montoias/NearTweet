@@ -16,7 +16,7 @@
         android:allowBackup="true"
         android:icon="@drawable/neartweet"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/NearTweet" >
         <activity
             android:name="pt.ist.meic.cmov.neartweet.Login"
             android:label="@string/app_name" >

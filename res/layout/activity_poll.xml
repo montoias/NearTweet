@@ -59,17 +59,21 @@
         android:id="@+id/add_answer_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/answer"
-        android:layout_alignBottom="@+id/answer"
-        android:layout_centerHorizontal="true"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/answer"
+        android:layout_marginTop="33dp"
+        android:onClick="addAnswer"
         android:text="Add Answer" />
 
     <Button
         android:id="@+id/send_poll_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_alignRight="@+id/answer_list"
+        android:layout_alignLeft="@+id/answer"
+        android:layout_alignTop="@+id/add_answer_button"
+        android:layout_marginLeft="42dp"
+        android:layout_marginTop="24dp"
+        android:onClick="sendPoll"
         android:text="Start Poll" />
 
 </RelativeLayout>
