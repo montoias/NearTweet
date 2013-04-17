@@ -2,6 +2,7 @@ package pt.ist.meic.cmov.neartweet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -12,7 +13,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +59,7 @@ public class TweetActivity extends Fragment implements OnClickListener{
 //		getActivity().findViewById(R.id.GPS).setOnClickListener(this);
 		getActivity().findViewById(R.id.galleryButton).setOnClickListener(this);
 		getActivity().findViewById(R.id.camera).setOnClickListener(this);
-		getActivity().findViewById(R.id.add_answer_button).setOnClickListener(this);
+		getActivity().findViewById(R.id.tweet).setOnClickListener(this);
 		
 		
 	}
@@ -149,7 +149,7 @@ public class TweetActivity extends Fragment implements OnClickListener{
 			takePhoto(v);
 			break;
 
-		case R.id.add_answer_button:
+		case R.id.tweet:
 			Toast.makeText(getActivity(), "about to send tweet", Toast.LENGTH_LONG).show();
 			sendTweet(v);
 			break;	

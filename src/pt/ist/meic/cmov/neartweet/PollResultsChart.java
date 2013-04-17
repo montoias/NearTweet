@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import org.achartengine.ChartFactory;
-import org.achartengine.GraphicalActivity;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
@@ -26,15 +25,17 @@ public class PollResultsChart {
 	
 	public void addNewPoll(String id, ArrayList<String> answers) {
 		Log.d("Paulo", "Adding new poll to chart: " + id);
+		for(String answer : answers)
+			Log.d("Paulo", "\t" + answer);
 		this.answers.put(id, answers);
 		ArrayList<Double> counters = new ArrayList<Double>(answers.size());
 		for(int i = answers.size(); i > 0; i--)
-			counters.add(new Double(0));
+			counters.add(Double.valueOf(0));
 		this.counter.put(id, counters);
 	}
 	
 	public void updateCounter(String id, String answer) {
-		Log.d("Paulo", "Updating poll chart for id " + id);
+		Log.d("Paulo", "Updating poll chart for id " + id + ": " + answer);
 		int index = answers.get(id).indexOf(answer);
 		counter.get(id).set(index, counter.get(id).get(index) + 1);
 	}

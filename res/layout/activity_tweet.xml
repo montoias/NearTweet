@@ -16,10 +16,7 @@
     android:layout_alignParentTop="true"
     android:layout_marginTop="115dp"
     android:ems="10"
-    android:hint="@string/edit_message" >
-
-    <requestFocus />
-</EditText>
+    android:hint="@string/edit_message" />
 
 <TextView
         android:id="@+id/textView2"
@@ -49,7 +46,7 @@
     android:text="Camera" />
 
 <Button
-    android:id="@+id/add_answer_button"
+    android:id="@+id/tweet"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_alignLeft="@+id/galleryButton"

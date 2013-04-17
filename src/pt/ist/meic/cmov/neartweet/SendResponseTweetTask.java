@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
-
 import android.os.AsyncTask;
 import android.util.Log;
 

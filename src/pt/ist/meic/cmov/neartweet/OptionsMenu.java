@@ -1,11 +1,10 @@
 package pt.ist.meic.cmov.neartweet;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,17 +25,16 @@ public class OptionsMenu extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		Intent i;
 		switch (v.getId()) {
         case R.id.Tweet:
         	
         	FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-            TweetActivity fragment = new TweetActivity();
+            Fragment fragment = new TweetActivity();
             fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
-                    android.R.anim.slide_out_right, android.R.anim.slide_in_left,
-                    android.R.anim.slide_out_right);
+            		android.R.anim.slide_out_right, android.R.anim.slide_in_left,
+            		android.R.anim.slide_out_right);
 
             fragmentTransaction.replace(R.id.options_menu, fragment, null);
             fragmentTransaction.addToBackStack(null); 
@@ -48,7 +46,7 @@ public class OptionsMenu extends Fragment implements OnClickListener {
         	fragmentManager = getFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
 
-            PollActivity fragmentPoll = new PollActivity();
+            Fragment fragmentPoll = new PollActivity();
             fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
                     android.R.anim.slide_out_right, android.R.anim.slide_in_left,
                     android.R.anim.slide_out_right);

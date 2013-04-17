@@ -141,7 +141,8 @@ public class RegisterUserServiceTask {
 						
 						if(tweetDto.getType() == TweetDto.TYPE_POLL_ANSWER && ((tweetDto.getTweetId().split(" "))[1]).equals(UserData.user)) {
 							Log.d("Paulo", "Tweet of type " + tweetDto.getType() + " received from " + (tweetDto.getTweetId().split(" "))[1]);
-							TimeLine.pollResultsChart.updateCounter(tweetDto.getConversationID(), tweetMessage.substring(tweetMessage.indexOf(' ') + 1));
+//							TimeLine.pollResultsChart.updateCounter(tweetDto.getConversationID(), tweetDto.getTweet().substring(tweetDto.getTweet().indexOf(' ') + 1));
+							TimeLine.pollResultsChart.updateCounter(tweetDto.getConversationID(), tweetDto.getTweet());
 						}
 						
 						//Update adapters

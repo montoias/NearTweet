@@ -2,10 +2,9 @@ package pt.ist.meic.cmov.neartweet;
 
 import java.util.ArrayList;
 
-import pt.ist.meic.cmov.neartweet.PollChoserDialog.PollChoserListener;
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
 import android.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,7 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-public class TimeLine extends Fragment implements PollChoserListener {
+public class TimeLine extends Fragment {
 	TweetsDataSource dataSource = UserData.getBd();
 	ListView listView;
 	ArrayAdapter<String> adapter;
@@ -150,36 +149,6 @@ public class TimeLine extends Fragment implements PollChoserListener {
 		dialog.show(getActivity().getFragmentManager(), "PollChoserFragment");
 	}
 	
-	@Override
-	public void onDialogChoice(DialogFragment dialog, String answer) {
-		Toast.makeText(getActivity(), "Answer: " + answer, Toast.LENGTH_LONG).show();
-		
-		try{	
-			Bundle info = dialog.getArguments();
-			String convId = info.getString("conversationId");
-			String id = info.getString("id");
-			Bundle b = new Bundle();
-			b.putString("tweet", answer);
-			b.putString("user", UserData.user);
-			b.putString("asker", info.getString("asker"));
-			b.putString("conversationId", convId);
-			b.putBoolean("privacy", true);
-			b.putBoolean("isPollAnswer", true);
-			Message msg = Message.obtain(null, NetworkManagerService.SEND_RESPONSE_TWEET);
-			msg.setData(b);
-			UserData.mService.send(msg);
-			ArrayList<TweetDto> tweets = dataSource.getAllTweets();
-			for(TweetDto tweet : tweets)
-				if(tweet.getTweetId().equals(id)) {
-					tweet.setPollAnswered();		//TODO: tweets are not being marked as answered
-					Log.d("Paulo", "Marking tweet " + tweet.getTweetId() + " as marked");
-//					break;
-				}
-		} catch(RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public void onDestroy() {
 		super.onDestroy();

@@ -9,7 +9,6 @@ import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

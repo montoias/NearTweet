@@ -3,15 +3,13 @@ package pt.ist.meic.cmov.neartweet;
 import java.util.ArrayList;
 
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -45,15 +43,15 @@ public class PollActivity extends Fragment implements OnClickListener{
 	    
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(getActivity());
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		switch (item.getItemId()) {
+//		case android.R.id.home:
+//			NavUtils.navigateUpFromSameTask(getActivity());
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 	
 	public void addAnswer(View view) {
 		String answer = ((EditText)getActivity().findViewById(R.id.answer)).getText().toString();
@@ -80,7 +78,7 @@ public class PollActivity extends Fragment implements OnClickListener{
 			re.printStackTrace();
 		}
 		
-		getActivity().getSupportFragmentManager().popBackStack();
+		getActivity().getFragmentManager().popBackStack();
 	}
 
 	@Override

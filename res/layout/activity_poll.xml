@@ -8,72 +8,49 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".PollActivity" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="44dp"
-        android:text="Question" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="49dp"
-        android:text="Answer" />
-
-    <ListView
-        android:id="@+id/answer_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/add_answer_button"
-        android:layout_marginTop="153dp" >
-    </ListView>
-
     <EditText
         android:id="@+id/question"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView1"
-        android:layout_alignBottom="@+id/textView1"
-        android:layout_alignLeft="@+id/answer"
-        android:ems="10" />
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:hint="Insert a Question" />
 
     <EditText
         android:id="@+id/answer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView2"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_marginLeft="160dp"
-        android:layout_toRightOf="@+id/textView1"
-        android:ems="10" >
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/question"
+        android:layout_marginTop="31dp"
+        android:ems="10"
+        android:hint="Add a option to the poll" >
 
         <requestFocus />
     </EditText>
 
     <Button
-        android:id="@+id/add_answer_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/answer"
-        android:layout_marginTop="33dp"
-        android:onClick="addAnswer"
-        android:text="Add Answer" />
-
-    <Button
         android:id="@+id/send_poll_button"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/answer"
-        android:layout_alignTop="@+id/add_answer_button"
-        android:layout_marginLeft="42dp"
-        android:layout_marginTop="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:onClick="sendPoll"
         android:text="Start Poll" />
+
+    <ListView
+        android:id="@+id/answer_list"
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:layout_above="@+id/send_poll_button"
+        android:layout_marginBottom="59dp" >
+    </ListView>
+
+    <Button
+        android:id="@+id/add_answer_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/answer"
+        android:layout_marginTop="47dp"
+        android:onClick="addAnswer"
+        android:text="Add Answer" />
 
 </RelativeLayout>
