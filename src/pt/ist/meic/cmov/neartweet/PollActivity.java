@@ -69,7 +69,7 @@ public class PollActivity extends Fragment implements OnClickListener{
 			b.putString("user", UserData.user);
 			b.putInt("poll", TweetDto.TYPE_POLL);
 			b.putString("tweet", "Poll: " + ((EditText)getActivity().findViewById(R.id.question)).getText().toString());
-			b.putStringArrayList("answers", answers);
+			b.putByteArray("answers", Utils.convertObjectoToBytes(answers));
 
 			Message msg = Message.obtain(null, NetworkManagerService.SEND_POLL);
 			msg.setData(b);
@@ -78,7 +78,11 @@ public class PollActivity extends Fragment implements OnClickListener{
 			re.printStackTrace();
 		}
 		
-		getActivity().getFragmentManager().popBackStack();
+		((EditText)getActivity().findViewById(R.id.question)).getText().clear();
+		((EditText)getActivity().findViewById(R.id.answer)).getText().clear();
+
+		adapter.clear();
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override

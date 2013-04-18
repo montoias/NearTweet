@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -56,7 +57,7 @@ public class TweetActivity extends Fragment implements OnClickListener{
 		Log.d("Paulo", "binded");
 	    
 		
-//		getActivity().findViewById(R.id.GPS).setOnClickListener(this);
+		getActivity().findViewById(R.id.GPS).setOnClickListener(this);
 		getActivity().findViewById(R.id.galleryButton).setOnClickListener(this);
 		getActivity().findViewById(R.id.camera).setOnClickListener(this);
 		getActivity().findViewById(R.id.tweet).setOnClickListener(this);
@@ -65,7 +66,7 @@ public class TweetActivity extends Fragment implements OnClickListener{
 	}
 	
 	
-/*	public void displayMyLocation(View arg0) {
+	public void displayMyLocation(View arg0) {
 		final CheckBox checkBox = (CheckBox) getActivity().findViewById(R.id.GPS);
 
 		if (checkBox.isChecked()) {
@@ -76,7 +77,7 @@ public class TweetActivity extends Fragment implements OnClickListener{
 			this.longitude = 0;
 		}
 	}
-*/	
+	
 	public void getLocation() {
 		gps.getLocation();
 		if (gps.canGetLocation()) {
@@ -137,9 +138,9 @@ public class TweetActivity extends Fragment implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-//		case R.id.GPS:
-//			displayMyLocation(v);
-//			break;
+		case R.id.GPS:
+			displayMyLocation(v);
+			break;
 			
 		case R.id.galleryButton:
 			galleryPhoto(v);

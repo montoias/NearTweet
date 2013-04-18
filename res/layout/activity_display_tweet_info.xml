@@ -58,7 +58,8 @@
     <ListView
         android:id="@+id/listTweetInfo"
         android:layout_width="500dp"
-        android:layout_height="400dp" />
+        android:layout_height="400dp"
+        android:layout_alignBottom="@+id/DisplayLocation" />
 
     <Button
         android:id="@+id/responseTweetButton"

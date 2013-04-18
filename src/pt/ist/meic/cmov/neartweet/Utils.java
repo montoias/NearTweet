@@ -3,7 +3,10 @@ package pt.ist.meic.cmov.neartweet;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -126,9 +129,28 @@ public class Utils {
 		return BitmapFactory.decodeStream(stream);
 	}
 	
+	public static ArrayList<String> convertBytesToArray(byte[] bytes){
+		ArrayList<String> list;
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+			list = (ArrayList<String>) ois.readObject();
+			return list;
+		} catch (OptionalDataException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
 	
-	
-	public static byte[] convertObjectoToBytes(Object obj) {
+	public static byte[] convertObjectoToBytes(Serializable obj) {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oos;

@@ -105,7 +105,7 @@ public class NetworkManagerService extends Service {
 			case SEND_POLL:
 				tweet = msg.getData().getString("tweet");
 				user = msg.getData().getString("user");
-				HashSet<String> answers = new HashSet<String>(msg.getData().getStringArrayList("answers"));
+				HashSet<String> answers = new HashSet<String>(Utils.convertBytesToArray(msg.getData().getByteArray("answers")));
 				SendPollTask spt = new SendPollTask(tweet, user, answers);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 					spt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);

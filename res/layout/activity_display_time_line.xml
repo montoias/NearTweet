@@ -11,14 +11,20 @@
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="500dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:focusable="false" >
+    </ListView>
 
     <TextView
-        android:id="@android:id/text1"
-        android:layout_width="match_parent"
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical" 
-        android:onClick="displayTweet"
-        android:textIsSelectable="true"/>
+        android:layout_above="@+id/list"
+        android:layout_alignLeft="@+id/list"
+        android:layout_marginBottom="28dp"
+        android:text="Tweets:"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

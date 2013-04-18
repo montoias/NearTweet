@@ -62,6 +62,7 @@ public class DisplayTweetInfo extends Activity {
 	ArrayList<TweetDto> conversation, tweets;
 	Messenger mService = UserData.getBoundedMessenger();
 	ArrayAdapter<String> adapter;
+	ListView listView;
 
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
@@ -70,18 +71,16 @@ public class DisplayTweetInfo extends Activity {
 		public void handleMessage(Message msg) {	//TODO: Broken: Tweets after polls no longer show here even if from same conversation
 			switch (msg.what) {
 			case NetworkManagerService.UPDATE_ADAPTER:
-				Toast.makeText(DisplayTweetInfo.this, "displayTweetIngo- update Adapter", Toast.LENGTH_LONG).show();
-				Log.d("Paulo", "displayTweetIngo- update Adapter");
+//				Toast.makeText(DisplayTweetInfo.this, "displayTweetIngo- update Adapter", Toast.LENGTH_LONG).show();
+//				Log.d("Paulo", "displayTweetIngo- update Adapter");
 //				Log.d("Paulo", "TimeLine: mensagem" + msg.getData().getString("tweet"));
-				tweets = dataSource.getAllTweets();
-				conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
 
-				// Need to reverse the tweets in order to show the conversation
-				Collections.reverse(conversation);
+				drawTimeLine();
+				
 
-				if(!(msg.getData().getInt("type") == TweetDto.TYPE_POLL))
-					adapter.add("\t" + msg.getData().getString("tweet"));
-				adapter.notifyDataSetChanged();
+//				if(!(msg.getData().getInt("type") == TweetDto.TYPE_POLL))
+//					adapter.add("\t" + msg.getData().getString("tweet"));
+//				adapter.notifyDataSetChanged();
 				break;
 
 			default:
@@ -89,6 +88,18 @@ public class DisplayTweetInfo extends Activity {
 			}
 		}
 
+
+	}
+
+	private void drawTimeLine() {
+		tweets = dataSource.getAllTweets();
+		conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
+
+		// Need to reverse the tweets in order to show the conversation
+		Collections.reverse(conversation);
+
+		listView = (ListView) findViewById(R.id.listTweetInfo);
+		listView.setAdapter(new CustomAdapter(conversation, this));
 	}
 
 	private enum PendingAction {
@@ -137,8 +148,6 @@ public class DisplayTweetInfo extends Activity {
 		Intent iin = getIntent();
 		InitializeData(iin.getExtras());
 
-		ListView listView = (ListView) findViewById(R.id.listTweetInfo);
-		ArrayList<String> values = Utils.convertTweetsToString(conversation);
 
 		// Register on Service the adapter
 		try {
@@ -154,11 +163,15 @@ public class DisplayTweetInfo extends Activity {
 			e.printStackTrace();
 		}
 
-		for (int i = 1; i < conversation.size(); i++)
-			values.set(i, "\t" + values.get(i));
+//		listView = (ListView) findViewById(R.id.listTweetInfo);
+//		ArrayList<String> values = Utils.convertTweetsToString(conversation);
+
+//		for (int i = 1; i < conversation.size(); i++)
+//			values.set(i, "\t" + values.get(i));
 		
-		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);
-		listView.setAdapter(adapter);
+//		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);
+//		listView.setAdapter(adapter);
+		drawTimeLine();
 
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);

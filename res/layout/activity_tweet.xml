@@ -8,17 +8,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".TweetActivity" >
 
-<EditText
-    android:id="@+id/tweetString"
-    android:layout_width="fill_parent"
-    android:layout_height="200dp"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentTop="true"
-    android:layout_marginTop="115dp"
-    android:ems="10"
-    android:hint="@string/edit_message" />
-
-<TextView
+    <TextView
         android:id="@+id/textView2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -27,41 +17,93 @@
         android:layout_marginTop="42dp"
         android:text="@string/multimediaOptions" />
 
-<Button
-    android:id="@+id/galleryButton"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignLeft="@+id/textView2"
-    android:layout_below="@+id/textView2"
-    android:layout_marginTop="112dp"
-    android:text="Gallery" />
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tweetString"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="46dp"
+        android:height="50dp"
+        android:text="Create your Own Tweet" />
 
-<Button
-    android:id="@+id/camera"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignLeft="@+id/galleryButton"
-    android:layout_below="@+id/textView2"
-    android:layout_marginTop="39dp"
-    android:text="Camera" />
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/camera"
+        android:layout_alignRight="@+id/camera"
+        android:layout_below="@+id/camera"
+        android:gravity="center"
+        android:text="camera" />
 
-<Button
-    android:id="@+id/tweet"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignLeft="@+id/galleryButton"
-    android:layout_alignParentBottom="true"
-    android:layout_marginBottom="49dp"
-    android:text="@string/Tweet" />
+    <Button
+        android:id="@+id/galleryButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignTop="@+id/camera"
+        android:layout_marginLeft="30dp"
+        android:layout_toRightOf="@+id/camera"
+        android:background="@drawable/galleryicon" />
 
-<TextView
-    android:id="@+id/TextView01"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignLeft="@+id/tweetString"
-    android:layout_alignParentTop="true"
-    android:layout_marginTop="46dp"
-    android:text="Create your Own Tweet"
-    android:height="50dp" />
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/galleryButton"
+        android:layout_alignRight="@+id/galleryButton"
+        android:layout_below="@+id/camera"
+        android:gravity="center"
+        android:text="gallery" />
+
+    <Button
+        android:id="@+id/camera"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_marginLeft="72dp"
+        android:layout_marginTop="22dp"
+        android:background="@drawable/cameraicon" />
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tweet"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="30dp"
+        android:text="Do you wish to post your location:" />
+
+     <EditText
+         android:id="@+id/tweetString"
+         android:layout_width="fill_parent"
+         android:layout_height="200dp"
+         android:layout_alignLeft="@+id/TextView03"
+         android:layout_alignTop="@+id/TextView01"
+         android:ems="10"
+         android:hint="@string/edit_message" >
+
+         <requestFocus />
+     </EditText>
+
+     <CheckBox
+         android:id="@+id/GPS"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignBaseline="@+id/TextView03"
+         android:layout_alignBottom="@+id/TextView03"
+         android:layout_toRightOf="@+id/TextView02"
+         android:onClick="displayMyLocation"
+         android:text="@string/gps" />
+
+     <Button
+         android:id="@+id/tweet"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/GPS"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="82dp"
+         android:text="@string/Tweet" />
 
 </RelativeLayout>

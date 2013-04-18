@@ -16,8 +16,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
-public class FragmentMainMenu extends Activity
-implements PollChoserListener, ActionBar.TabListener {
+public class FragmentMainMenu extends Activity implements PollChoserListener,
+		ActionBar.TabListener {
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +57,17 @@ implements PollChoserListener, ActionBar.TabListener {
 		getMenuInflater().inflate(R.menu.fragment_main_menu, menu);
 		return true;
 	}
-	
-    protected void onDestroy() {        
-        super.onDestroy();
-        UserData.getBd().onDestroy();
-    }
-    
-    @Override
+
+	protected void onDestroy() {
+		super.onDestroy();
+		UserData.getBd().onDestroy();
+	}
+
+	@Override
 	public void onDialogChoice(DialogFragment dialog, String answer) {
 		Toast.makeText(this, "Answer: " + answer, Toast.LENGTH_LONG).show();
-		
-		try{	
+
+		try {
 			Bundle info = dialog.getArguments();
 			String convId = info.getString("conversationId");
 			String id = info.getString("id");
@@ -77,22 +78,25 @@ implements PollChoserListener, ActionBar.TabListener {
 			b.putString("conversationId", convId);
 			b.putBoolean("privacy", true);
 			b.putBoolean("isPollAnswer", true);
-			Message msg = Message.obtain(null, NetworkManagerService.SEND_RESPONSE_TWEET);
+			Message msg = Message.obtain(null,
+					NetworkManagerService.SEND_RESPONSE_TWEET);
 			msg.setData(b);
 			UserData.mService.send(msg);
 			ArrayList<TweetDto> tweets = UserData.dataSource.getAllTweets();
-			for(TweetDto tweet : tweets)
-				if(tweet.getTweetId().equals(id)) {
-					tweet.setPollAnswered();		//TODO: tweets are not being marked as answered
-					Log.d("Paulo", "Marking tweet " + tweet.getTweetId() + " as marked");
-//					break;
+			for (TweetDto tweet : tweets)
+				if (tweet.getTweetId().equals(id)) {
+					tweet.setPollAnswered(); // TODO: tweets are not being
+												// marked as answered
+					Log.d("Paulo", "Marking tweet " + tweet.getTweetId()
+							+ " as marked");
+					// break;
 				}
-		} catch(RemoteException e) {
+		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 
-    @Override
+	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
 		// TODO Auto-generated method stub
 
@@ -107,7 +111,7 @@ implements PollChoserListener, ActionBar.TabListener {
 			getFragmentManager().beginTransaction()
 					.replace(R.id.options_menu, firstFragment).commit();
 			break;
-			
+
 		case 1:
 			PollActivity pollFragment = new PollActivity();
 			getFragmentManager().beginTransaction()
@@ -117,11 +121,10 @@ implements PollChoserListener, ActionBar.TabListener {
 		default:
 			break;
 		}
-		
-		
-//		OptionsMenu firstFragment = new OptionsMenu();
-//		getSupportFragmentManager().beginTransaction()
-//				.add(R.id.options_menu, firstFragment).commit();
+
+		// OptionsMenu firstFragment = new OptionsMenu();
+		// getSupportFragmentManager().beginTransaction()
+		// .add(R.id.options_menu, firstFragment).commit();
 
 	}
 

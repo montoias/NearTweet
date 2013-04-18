@@ -12,18 +12,23 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
 public class TimeLine extends Fragment {
 	TweetsDataSource dataSource = UserData.getBd();
+	AdapterView.AdapterContextMenuInfo info;
 	ListView listView;
 	ArrayAdapter<String> adapter;
 	static Messenger mService = UserData.getBoundedMessenger();
@@ -35,8 +40,9 @@ public class TimeLine extends Fragment {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case NetworkManagerService.UPDATE_ADAPTER:
-				Log.d("Paulo","TimeLine: mensagem" + msg.getData().getString("tweet"));
-				drawTimeLine();			//TODO: redraws everything every time, add to adapter and use adapter notify
+				Log.d("Paulo",	"TimeLine: mensagem" + msg.getData().getString("tweet"));
+				drawTimeLine(); // TODO: redraws everything every time, add to
+								// adapter and use adapter notify
 				break;
 
 			default:
@@ -48,45 +54,14 @@ public class TimeLine extends Fragment {
 	public void drawTimeLine() {
 
 		listView = (ListView) getActivity().findViewById(R.id.list);
-		ArrayList<String> values = Utils.convertTweetsToString(dataSource.getAllTweets());
-		adapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_1, android.R.id.text1, values);
-
-		listView.setAdapter(adapter);
-	}
-	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_display_time_line, container, false);
-    }
-	
-	public void onStart() {
-        super.onStart();
-		drawTimeLine();
-
-		// Register on Service the adapter
-		try {
-
-			Bundle b = new Bundle();
-			b.putString("id", UserData.getUser() + "TimeLine");
-			Message msg = Message.obtain(null,
-					NetworkManagerService.REGISTER_TO_RECEIVE_UPDATES);
-			msg.setData(b);
-			msg.replyTo = mMessenger;
-			Log.d("Paulo", msg.replyTo.toString());
-			mService.send(msg);
-
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-
-		displayTweet();
-        
+		listView.setAdapter(new CustomAdapter(dataSource.getAllTweets(), getActivity()));
+		registerForContextMenu(listView);
+		// registerForContextMenu(listView);
 	}
 
-/*	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_time_line);
+	@Override
+	public void onActivityCreated(Bundle savedState) {
+		super.onActivityCreated(savedState);
 
 		drawTimeLine();
 
@@ -95,8 +70,7 @@ public class TimeLine extends Fragment {
 
 			Bundle b = new Bundle();
 			b.putString("id", UserData.getUser() + "TimeLine");
-			Message msg = Message.obtain(null,
-					NetworkManagerService.REGISTER_TO_RECEIVE_UPDATES);
+			Message msg = Message.obtain(null, NetworkManagerService.REGISTER_TO_RECEIVE_UPDATES);
 			msg.setData(b);
 			msg.replyTo = mMessenger;
 			Log.d("Paulo", msg.replyTo.toString());
@@ -108,7 +82,13 @@ public class TimeLine extends Fragment {
 
 		displayTweet();
 	}
-*/
+
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.activity_display_time_line, container,
+				false);
+	}
+
 	public void displayTweet() {
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -116,39 +96,24 @@ public class TimeLine extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view,
 					int position, long id) {
-				TweetDto tweet = dataSource.getAllTweets().get(position);
-				if(tweet.getType() == TweetDto.TYPE_POLL) {
-					if(tweet.getSender().equals(UserData.user)) {
-						Intent i = pollResultsChart.execute(getActivity(), tweet.getTweetId(), tweet.getTweet());
-//						Intent i = pollResultsChart.execute(TimeLine.this);
-						startActivity(i);
-					} else if(!tweet.isPollAnswered()) { //TODO: tweets are not being marked as answered
-						Log.d("Paulo", "Answering tweet " + tweet.getTweetId());
-						showPollChoserDialog(tweet);
-					}
-					else
-						Toast.makeText(getActivity(), "Poll already answered", Toast.LENGTH_LONG).show();
-				} else {					
-					Intent i = new Intent(getActivity(), DisplayTweetInfo.class);
-					i.putExtra("position", position);
-					startActivity(i);
-				}
+				arg0.showContextMenuForChild(view);
 			}
 		});
 	}
-	
+
 	public void showPollChoserDialog(TweetDto tweet) {
 		Bundle b = new Bundle();
 		b.putString("question", tweet.getTweet());
 		b.putString("asker", tweet.getSender());
 		b.putString("conversationId", tweet.getConversationID());
 		b.putString("id", tweet.getTweetId());
-		b.putStringArrayList("answers", new ArrayList<String>(tweet.getAnswers()));
+		b.putStringArrayList("answers",
+				new ArrayList<String>(tweet.getAnswers()));
 		DialogFragment dialog = new PollChoserDialog();
 		dialog.setArguments(b);
 		dialog.show(getActivity().getFragmentManager(), "PollChoserFragment");
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -163,6 +128,72 @@ public class TimeLine extends Fragment {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,	ContextMenuInfo menuInfo) {
+		// TODO Auto-generated method stub
+		super.onCreateContextMenu(menu, v, menuInfo);
+		info = (AdapterContextMenuInfo) menuInfo;
+		
+		
+		//In Case it is a Poll jump this step
+		if(dataSource.getAllTweets().get(info.position).getType() == TweetDto.TYPE_POLL){
+			 displayTweetInfo(info.position);
+			 return;
+		}
+		Toast.makeText(getActivity(), "onCreateContextMenu " + info.position, Toast.LENGTH_LONG).show();
+
+		menu.setHeaderTitle(dataSource.getAllTweets().get(info.position).getSender());
+		menu.add(Menu.NONE, v.getId(), 0, "Reply Private");
+		menu.add(Menu.NONE, v.getId(), 0, "Reply All");
+		menu.add(Menu.NONE, v.getId(), 0, "Add To SpamList");
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
+		int position = menuInfo.position;
+		if (item.getTitle() == "Reply Private") {
+			Toast.makeText(getActivity(), "REPLY PRIVATE", Toast.LENGTH_LONG).show();
+			UserData.setPrivacyInTweets(true);
+			displayTweetInfo(position);
+			// Do your working
+		} else if (item.getTitle() == "Reply All") {
+			Toast.makeText(getActivity(), "REPLY ALL", Toast.LENGTH_LONG).show();
+			UserData.setPrivacyInTweets(false);
+			displayTweetInfo(position);
+
+			// Do your working
+		} else if (item.getTitle() == "Add To SpamList") {
+			UserData.addSpamInfraction(dataSource.getAllTweets().get(position).getSender());
+			Toast.makeText(getActivity(), "Added To the SpamList " + dataSource.getAllTweets().get(position).getSender(), Toast.LENGTH_LONG).show();
+			
+			// Do your working
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	public void displayTweetInfo(int position) {
+		TweetDto tweet = dataSource.getAllTweets().get(position);
+		if (tweet.getType() == TweetDto.TYPE_POLL) {
+			if (tweet.getSender().equals(UserData.user)) {
+				Intent i = pollResultsChart.execute(getActivity(), tweet.getTweetId(), tweet.getTweet());
+				// Intent i = pollResultsChart.execute(TimeLine.this);
+				startActivity(i);
+			} else if (!tweet.isPollAnswered()) { 
+				Log.d("Paulo", "Answering tweet " + tweet.getTweetId());
+				showPollChoserDialog(tweet);
+			} else
+				Toast.makeText(getActivity(), "Poll already answered",
+						Toast.LENGTH_LONG).show();
+		} else {
+			Intent i = new Intent(getActivity(), DisplayTweetInfo.class);
+			i.putExtra("position", position);
+			startActivity(i);
+		}
 	}
 
 }

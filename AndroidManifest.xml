@@ -32,7 +32,7 @@
         </activity>
         <activity
             android:name="pt.ist.meic.cmov.neartweet.TimeLine"
-            android:label="@string/title_activity_display_message" >
+            android:label="@string/app_name" >
         </activity>
 
         <service
@@ -46,7 +46,7 @@
         </activity>
         <activity
             android:name="pt.ist.meic.cmov.neartweet.DisplayTweetInfo"
-            android:label="@string/title_activity_display_tweet_info" >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="pt.ist.meic.cmov.neartweet.PostOnFacebook"
@@ -78,7 +78,7 @@
         <activity android:name="org.achartengine.GraphicalActivity" />
         <activity
             android:name="pt.ist.meic.cmov.neartweet.FragmentMainMenu"
-            android:label="@string/title_activity_fragment_main_menu" >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="pt.ist.meic.cmov.neartweet.OptionsMenu"
