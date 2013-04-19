@@ -25,7 +25,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="46dp"
         android:height="50dp"
-        android:text="Create your Own Tweet" />
+        android:text="Create your Own Tweet"
+        android:textAppearance="?android:attr/textAppearanceLarge"  />
 
     <TextView
         android:id="@+id/textView1"
@@ -66,27 +67,6 @@
         android:layout_marginTop="22dp"
         android:background="@drawable/cameraicon" />
 
-    <TextView
-        android:id="@+id/TextView03"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tweet"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="30dp"
-        android:text="Do you wish to post your location:" />
-
-     <EditText
-         android:id="@+id/tweetString"
-         android:layout_width="fill_parent"
-         android:layout_height="200dp"
-         android:layout_alignLeft="@+id/TextView03"
-         android:layout_alignTop="@+id/TextView01"
-         android:ems="10"
-         android:hint="@string/edit_message" >
-
-         <requestFocus />
-     </EditText>
-
      <CheckBox
          android:id="@+id/GPS"
          android:layout_width="wrap_content"
@@ -97,13 +77,34 @@
          android:onClick="displayMyLocation"
          android:text="@string/gps" />
 
+     <EditText
+         android:id="@+id/tweetString"
+         android:layout_width="fill_parent"
+         android:layout_height="200dp"
+         android:layout_alignLeft="@+id/TextView03"
+         android:layout_below="@+id/TextView01"
+         android:ems="10"
+         android:hint="@string/edit_message" >
+
+         <requestFocus />
+     </EditText>
+
+     <TextView
+         android:id="@+id/TextView03"
+         android:layout_width="230dp"
+         android:layout_height="wrap_content"
+         android:layout_above="@+id/tweet"
+         android:layout_alignLeft="@+id/tweet"
+         android:layout_marginBottom="35dp"
+         android:text="Do you wish to post your location:" />
+
      <Button
          android:id="@+id/tweet"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:layout_below="@+id/GPS"
+         android:layout_alignParentBottom="true"
          android:layout_centerHorizontal="true"
-         android:layout_marginTop="82dp"
+         android:layout_marginBottom="31dp"
          android:text="@string/Tweet" />
 
 </RelativeLayout>

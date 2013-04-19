@@ -26,7 +26,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookOperationCanceledException;
@@ -47,8 +46,7 @@ public class DisplayTweetInfo extends Activity {
 	TweetsDataSource dataSource = UserData.getBd();
 	int position = 0;
 	String conversationID;
-	private static final List<String> PERMISSIONS = Arrays
-			.asList("publish_actions");
+	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
 	private final String PENDING_ACTION_BUNDLE_KEY = "com.facebook.samples.hellofacebook:PendingAction";
 	private Button postStatusUpdateButton, responseTweetButton;
 	private LoginButton loginButton;

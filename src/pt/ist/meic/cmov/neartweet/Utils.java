@@ -67,18 +67,34 @@ public class Utils {
 		tweetDto.setImage(image);
 		tweetDto.setLocation(location);
 		tweetDto.setPrivacy(false);
-						
+		tweetDto.setAvatar(UserData.getAvatar());				
 		tweetDto.setTweetId(System.currentTimeMillis() + user);
 		NetworkManagerService.oos.writeObject(tweetDto);
 		NetworkManagerService.oos.flush();
 
 	}
+	
+	public static void AddSpammer(String user, String spammer) throws IOException {
+
+		TweetDto tweetDto = new TweetDto();
+		tweetDto.setSender(user);
+		tweetDto.setSpammer(spammer);
+		tweetDto.setType(TweetDto.TYPE_SPAMMER);
+		tweetDto.setAvatar(UserData.getAvatar());
+		tweetDto.setTweetId(System.currentTimeMillis() + user);
+		NetworkManagerService.oos.writeObject(tweetDto);
+		NetworkManagerService.oos.flush();
+
+	}
+	
+	
 
 	public static void SendResponseTweet(String tweet, String user, byte[] image, String id, boolean privacy, boolean isPollAnswer, String asker) throws IOException {
 		TweetDto tweetDto = new TweetDto();
 		tweetDto.setTweet(tweet);
 		tweetDto.setSender(user);
 		tweetDto.setImage(image);
+		tweetDto.setAvatar(UserData.getAvatar());
 		if(isPollAnswer) {
 			tweetDto.setType(TweetDto.TYPE_POLL_ANSWER);
 			tweetDto.setTweetId(System.currentTimeMillis() + user + " " + asker);
@@ -109,7 +125,8 @@ public class Utils {
 		tweetDto.setImage(null);
 		tweetDto.setPrivacy(false);
 		tweetDto.setLocation(null);
-
+		tweetDto.setAvatar(UserData.getAvatar());
+		
 		tweetDto.setTweetId(System.currentTimeMillis() + user);
 		NetworkManagerService.oos.writeObject(tweetDto);
 		NetworkManagerService.oos.flush();

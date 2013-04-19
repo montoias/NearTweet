@@ -6,12 +6,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -20,6 +24,7 @@ import android.widget.Toast;
 
 public class Login extends Activity {
 
+	private static final int RESULT_LOAD_IMAGE = 10;
 	boolean mIsBound;
 	String user;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -146,5 +151,57 @@ public class Login extends Activity {
 		}
 
 	}
+	
+	public void loadDefaultPic(View view) {
+		Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(i, RESULT_LOAD_IMAGE);
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		String title = null;
+		if (requestCode == RESULT_LOAD_IMAGE) {
+			title = "Gallery";
+			switch (resultCode) {
+
+			case Activity.RESULT_OK:
+
+				Uri selectedImage = data.getData();
+				String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+				Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+				cursor.moveToFirst();
+				int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+				String picturePath = cursor.getString(columnIndex);
+				cursor.close();
+
+				UserData.setImage(Utils.convertBmpToBytes(BitmapFactory.decodeFile(picturePath)));
+
+				new AlertDialog.Builder(this).setTitle(title)
+						.setMessage(title + " image has been loaded sucessfully")
+						.setPositiveButton("ok", null).show();
+				
+				findViewById(R.id.RegisterOnServer).setEnabled(true);
+				break;
+
+			case Activity.RESULT_CANCELED:
+				new AlertDialog.Builder(this)
+						.setTitle(title)
+						.setMessage(
+								"You canceled the load of a image from the "
+										+ title).setPositiveButton("ok", null)
+						.show();
+				break;
+
+			default:
+				new AlertDialog.Builder(this).setTitle(title)
+						.setMessage(title + " image failed to load")
+						.setPositiveButton("ok", null).show();
+				break;
+			}
+		}
+	}
+
+	
 
 }

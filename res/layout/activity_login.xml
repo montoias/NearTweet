@@ -8,45 +8,44 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".Login" >
 
-    <EditText
-        android:id="@+id/passwordString"
-        android:layout_width="400dp"
-        android:layout_height="50dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="178dp"
-        android:ems="10"
-        android:hint="@string/login_password"
-        android:inputType="textPassword" />
-
-    <EditText
-        android:id="@+id/userString"
-        android:layout_width="400dp"
-        android:layout_height="50dp"
-        android:layout_above="@+id/passwordString"
-        android:layout_alignLeft="@+id/passwordString"
-        android:layout_marginBottom="64dp"
-        android:ems="10"
-        android:hint="@string/login_user" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/passwordString"
-        android:layout_below="@+id/passwordString"
-        android:layout_marginLeft="122dp"
-        android:layout_marginTop="83dp"
-        android:onClick="register"
-        android:text="@string/Register" />
-
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/userString"
-        android:layout_marginRight="188dp"
-        android:layout_toLeftOf="@+id/passwordString"
+        android:layout_alignLeft="@+id/RegisterOnServer"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="97dp"
         android:src="@drawable/neartweet" />
+
+    <Button
+        android:id="@+id/RegisterOnServer"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="109dp"
+        android:onClick="register"
+        android:text="@string/Register" 
+        android:enabled="false"/>
+
+    <EditText
+        android:id="@+id/userString"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/login_user" />
+
+    <Button
+        android:id="@+id/LoadImage"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/RegisterOnServer"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="43dp"
+        android:onClick="loadDefaultPic"
+        android:text="Choose your Avatar" />
 
 </RelativeLayout>

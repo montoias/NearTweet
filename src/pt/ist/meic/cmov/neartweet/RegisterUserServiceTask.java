@@ -125,16 +125,25 @@ public class RegisterUserServiceTask {
 					String tweetMessage = Utils.convertTweetToString(tweetDto);
 					String sender = tweetDto.getSender();
 					
+					Log.d("Paulo", " user: " + tweetDto.getSender());
+
 					if(!UserData.isSpammer(sender)){
 						
-						if(spamFilter.isSpam(tweetMessage)){
-							Log.d("Paulo", "Spam detected: " + tweetMessage);
-							UserData.addSpamInfraction(sender);
-							if(UserData.isSpammer(sender)){
-								Log.d("Paulo", "New spammer: " + sender);
-								continue;
-							}
+						if(tweetDto.getType() == TweetDto.TYPE_SPAMMER){
+							Log.d("Paulo", "spammer: " + tweetDto.getSpammer() + " user: " + tweetDto.getSender());
+							UserData.addSpamInfraction(tweetDto);
+							continue;
 						}
+						
+//						if(spamFilter.isSpam(tweetMessage)){
+//							Log.d("Paulo", "Spam detected: " + tweetMessage);
+//							UserData.addSpamInfraction(sender);
+//							if(UserData.isSpammer(sender)){
+//								Log.d("Paulo", "New spammer: " + sender);
+//								continue;
+//							}
+//						}
+						
 						//Add to the DB
 						NetworkManagerService.dataSource.createTweet(tweetDto);
 						

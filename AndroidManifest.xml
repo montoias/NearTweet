@@ -88,6 +88,10 @@
             android:name="pt.ist.meic.cmov.neartweet.TweetActivity"
             android:label="@string/title_activity_tweet" >
         </activity>
+        <activity
+            android:name="pt.ist.meic.cmov.neartweet.SpamFragment"
+            android:label="@string/title_activity_spam_fragment" >
+        </activity>
     </application>
 
 </manifest>

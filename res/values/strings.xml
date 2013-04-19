@@ -28,5 +28,6 @@
     <string name="title_activity_fragment_main_menu">FragmentMainMenu</string>
     <string name="title_activity_options__menu">Options_Menu</string>
     <string name="title_activity_tweet">TweetActivity</string>
+    <string name="title_activity_spam_fragment">SpamFragment</string>
 
 </resources>

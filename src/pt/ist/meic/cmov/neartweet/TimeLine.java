@@ -40,7 +40,8 @@ public class TimeLine extends Fragment {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case NetworkManagerService.UPDATE_ADAPTER:
-				Log.d("Paulo",	"TimeLine: mensagem" + msg.getData().getString("tweet"));
+				Log.d("Paulo",
+						"TimeLine: mensagem" + msg.getData().getString("tweet"));
 				drawTimeLine(); // TODO: redraws everything every time, add to
 								// adapter and use adapter notify
 				break;
@@ -54,7 +55,7 @@ public class TimeLine extends Fragment {
 	public void drawTimeLine() {
 
 		listView = (ListView) getActivity().findViewById(R.id.list);
-		listView.setAdapter(new CustomAdapter(dataSource.getAllTweets(), getActivity()));
+		listView.setAdapter(new CustomAdapter(dataSource.getAllTweets(),getActivity()));
 		registerForContextMenu(listView);
 		// registerForContextMenu(listView);
 	}
@@ -70,7 +71,8 @@ public class TimeLine extends Fragment {
 
 			Bundle b = new Bundle();
 			b.putString("id", UserData.getUser() + "TimeLine");
-			Message msg = Message.obtain(null, NetworkManagerService.REGISTER_TO_RECEIVE_UPDATES);
+			Message msg = Message.obtain(null,
+					NetworkManagerService.REGISTER_TO_RECEIVE_UPDATES);
 			msg.setData(b);
 			msg.replyTo = mMessenger;
 			Log.d("Paulo", msg.replyTo.toString());
@@ -131,20 +133,22 @@ public class TimeLine extends Fragment {
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,	ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
 		// TODO Auto-generated method stub
 		super.onCreateContextMenu(menu, v, menuInfo);
 		info = (AdapterContextMenuInfo) menuInfo;
-		
-		
-		//In Case it is a Poll jump this step
-		if(dataSource.getAllTweets().get(info.position).getType() == TweetDto.TYPE_POLL){
-			 displayTweetInfo(info.position);
-			 return;
-		}
-		Toast.makeText(getActivity(), "onCreateContextMenu " + info.position, Toast.LENGTH_LONG).show();
 
-		menu.setHeaderTitle(dataSource.getAllTweets().get(info.position).getSender());
+		// In Case it is a Poll jump this step
+		if (dataSource.getAllTweets().get(info.position).getType() == TweetDto.TYPE_POLL) {
+			displayTweetInfo(info.position);
+			return;
+		}
+		Toast.makeText(getActivity(), "onCreateContextMenu " + info.position,
+				Toast.LENGTH_LONG).show();
+
+		menu.setHeaderTitle(dataSource.getAllTweets().get(info.position)
+				.getSender());
 		menu.add(Menu.NONE, v.getId(), 0, "Reply Private");
 		menu.add(Menu.NONE, v.getId(), 0, "Reply All");
 		menu.add(Menu.NONE, v.getId(), 0, "Add To SpamList");
@@ -152,23 +156,30 @@ public class TimeLine extends Fragment {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
+		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item
+				.getMenuInfo();
 		int position = menuInfo.position;
 		if (item.getTitle() == "Reply Private") {
-			Toast.makeText(getActivity(), "REPLY PRIVATE", Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity(), "REPLY PRIVATE", Toast.LENGTH_LONG)
+					.show();
 			UserData.setPrivacyInTweets(true);
 			displayTweetInfo(position);
 			// Do your working
 		} else if (item.getTitle() == "Reply All") {
-			Toast.makeText(getActivity(), "REPLY ALL", Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity(), "REPLY ALL", Toast.LENGTH_LONG)
+					.show();
 			UserData.setPrivacyInTweets(false);
 			displayTweetInfo(position);
 
 			// Do your working
 		} else if (item.getTitle() == "Add To SpamList") {
-			UserData.addSpamInfraction(dataSource.getAllTweets().get(position).getSender());
-			Toast.makeText(getActivity(), "Added To the SpamList " + dataSource.getAllTweets().get(position).getSender(), Toast.LENGTH_LONG).show();
-			
+			// UserData.addSpamInfraction(dataSource.getAllTweets().get(position).getSender());
+			Toast.makeText(
+					getActivity(),
+					"Added To the SpamList "
+							+ dataSource.getAllTweets().get(position)
+									.getSender(), Toast.LENGTH_LONG).show();
+			sendSpammerUser(dataSource.getAllTweets().get(position));
 			// Do your working
 		} else {
 			return false;
@@ -176,14 +187,30 @@ public class TimeLine extends Fragment {
 		return true;
 	}
 
+	private void sendSpammerUser(TweetDto tweetDto) {
+		try {
+			Bundle b = new Bundle();
+			b.putString("sender", UserData.getUser());
+			b.putString("spammer", tweetDto.getSender());
+			Message msg = Message.obtain(null, NetworkManagerService.ADD_SPAMMER);
+			msg.setData(b);
+			mService.send(msg);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	public void displayTweetInfo(int position) {
 		TweetDto tweet = dataSource.getAllTweets().get(position);
 		if (tweet.getType() == TweetDto.TYPE_POLL) {
 			if (tweet.getSender().equals(UserData.user)) {
-				Intent i = pollResultsChart.execute(getActivity(), tweet.getTweetId(), tweet.getTweet());
+				Intent i = pollResultsChart.execute(getActivity(),
+						tweet.getTweetId(), tweet.getTweet());
 				// Intent i = pollResultsChart.execute(TimeLine.this);
 				startActivity(i);
-			} else if (!tweet.isPollAnswered()) { 
+			} else if (!tweet.isPollAnswered()) {
 				Log.d("Paulo", "Answering tweet " + tweet.getTweetId());
 				showPollChoserDialog(tweet);
 			} else

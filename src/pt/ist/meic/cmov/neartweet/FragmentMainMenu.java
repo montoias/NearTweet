@@ -29,8 +29,6 @@ public class FragmentMainMenu extends Activity implements PollChoserListener,
 		// getSupportFragmentManager().beginTransaction().add(R.id.options_menu,
 		// firstFragment).commit();
 
-		// ----- to try out
-
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setHomeButtonEnabled(false);
@@ -40,10 +38,9 @@ public class FragmentMainMenu extends Activity implements PollChoserListener,
 				.setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setText("Poll")
 				.setTabListener(this));
-		actionBar.addTab(actionBar.newTab().setText("Blocked\nFriends")
+		actionBar.addTab(actionBar.newTab().setText("Blocked\nSpammers")
 				.setTabListener(this));
 
-		// correct ----
 
 		TimeLine secondFragment = new TimeLine();
 		getFragmentManager().beginTransaction()
@@ -116,6 +113,11 @@ public class FragmentMainMenu extends Activity implements PollChoserListener,
 			PollActivity pollFragment = new PollActivity();
 			getFragmentManager().beginTransaction()
 					.replace(R.id.options_menu, pollFragment).commit();
+			break;
+			
+		case 2:
+			SpamFragment spamFragment = new SpamFragment();
+			getFragmentManager().beginTransaction().replace(R.id.options_menu, spamFragment).commit();
 			break;
 
 		default:

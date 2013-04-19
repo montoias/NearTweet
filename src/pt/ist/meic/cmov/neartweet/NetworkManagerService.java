@@ -28,6 +28,7 @@ public class NetworkManagerService extends Service {
 	static final int UNREGISTER_TO_RECEIVE_UPDATES = 6;
 	static final int UPDATE_ADAPTER = 7;
 	static final int SEND_POLL = 8;
+	static final int ADD_SPAMMER = 9;
 
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	static TweetsDataSource dataSource = UserData.getBd();
@@ -112,7 +113,19 @@ public class NetworkManagerService extends Service {
 				else
 					spt.execute((Void[]) null);
 				break;
-
+				
+			case ADD_SPAMMER:
+				user = msg.getData().getString("sender");
+				String spammer = msg.getData().getString("spammer");
+				
+				AddSpammer as = new AddSpammer(user, spammer);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+					as.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
+				else
+					as.execute((Void[]) null);
+				break;
+				
+				
 			default:
 				super.handleMessage(msg);
 			}
