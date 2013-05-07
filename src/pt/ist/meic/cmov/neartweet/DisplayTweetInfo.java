@@ -91,7 +91,9 @@ public class DisplayTweetInfo extends Activity {
 
 	private void drawTimeLine() {
 		tweets = dataSource.getAllTweets();
-		conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
+		
+		//TODO: change method
+		conversation = Utils.retrieveTweetDtosSameID(tweets, conversationID);
 
 		// Need to reverse the tweets in order to show the conversation
 		Collections.reverse(conversation);
@@ -233,20 +235,32 @@ public class DisplayTweetInfo extends Activity {
 	}
 
 	private void InitializeData(Bundle b) {
-		if (b.get("position") != null) {
-			position = (Integer) b.get("position");
+		if (b.get("id") != null) {
+			conversationID = b.getString("id");
 
 			tweets = dataSource.getAllTweets();
-			conversation = Utils.retrieveTweetDtosSameID(tweets, tweets.get(position).getConversationID());
+			conversation = Utils.retrieveTweetDtosSameID(tweets, conversationID);
 			// Need to reverse the tweets in order to show the conversation
 			Collections.reverse(conversation);
 
-			message = tweets.get(position).getTweet();
-			conversationID = tweets.get(position).getConversationID();
+			//getTweetById(tweets, conversationID);
+			message = conversation.get(0).getTweet();
 
 		} else {
 			throw new RuntimeException("Should have a position as argument");
 		}
+	}
+	
+	
+
+	private TweetDto getTweetById(ArrayList<TweetDto> tweets2, String conversationId) {
+		for(TweetDto dto: tweets2){
+			if(dto.getConversationID().equalsIgnoreCase(conversationId)){
+				return dto;
+			}
+		}
+		return null;
+		
 	}
 
 	@Override

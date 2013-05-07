@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+        <string name="port">10001</string>
     <string name="app_name">Near Tweet</string>
     <string name="action_settings">Settings</string>
     <string name="edit_message"> The Text You want to Tweet</string>

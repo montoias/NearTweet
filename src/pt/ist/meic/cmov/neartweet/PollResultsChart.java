@@ -35,8 +35,8 @@ public class PollResultsChart {
 	}
 	
 	public void updateCounter(String id, String answer) {
-		Log.d("Paulo", "Updating poll chart for id " + id + ": " + answer);
 		int index = answers.get(id).indexOf(answer);
+		Log.d("Paulo", "Updating poll chart for id " + id + ": " + answer);
 		counter.get(id).set(index, counter.get(id).get(index) + 1);
 	}
 	

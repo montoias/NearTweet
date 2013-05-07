@@ -218,7 +218,7 @@ public class TimeLine extends Fragment {
 						Toast.LENGTH_LONG).show();
 		} else {
 			Intent i = new Intent(getActivity(), DisplayTweetInfo.class);
-			i.putExtra("position", position);
+			i.putExtra("id", tweet.getConversationID());
 			startActivity(i);
 		}
 	}

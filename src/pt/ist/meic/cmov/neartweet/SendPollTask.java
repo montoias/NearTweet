@@ -11,12 +11,14 @@ public class SendPollTask extends AsyncTask<Void, Void, Boolean> {
 	private String question;
 	private String user;
 	private HashSet<String> answers;
+	private NetworkManagerService nms;
 	
 	
-	public SendPollTask(String question, String user, HashSet<String> answers) {
+	public SendPollTask(String question, String user, HashSet<String> answers, NetworkManagerService networkManagerService) {
 		this.question = question;
 		this.user = user;
 		this.answers = answers;
+		this.nms = networkManagerService;
 	}
 	
 	@Override
@@ -31,7 +33,7 @@ public class SendPollTask extends AsyncTask<Void, Void, Boolean> {
 	@Override
 	protected Boolean doInBackground(Void... params) {
 		try {
-			Utils.sendPoll(question, user, answers);
+			Utils.sendPoll(question, user, answers,nms);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -58,7 +58,7 @@ public class Utils {
 
 	}
 
-	public static void SendTweet(String tweet, String user, byte[] image, String location)
+	public static void SendTweet(String tweet, String user, byte[] image, String location, NetworkManagerService nms)
 			throws IOException {
 
 		TweetDto tweetDto = new TweetDto();
@@ -68,28 +68,31 @@ public class Utils {
 		tweetDto.setLocation(location);
 		tweetDto.setPrivacy(false);
 		tweetDto.setAvatar(UserData.getAvatar());				
-		tweetDto.setTweetId(System.currentTimeMillis() + user);
-		NetworkManagerService.oos.writeObject(tweetDto);
-		NetworkManagerService.oos.flush();
+
+		String id = System.currentTimeMillis() + user;
+		tweetDto.setTweetId(id);
+		tweetDto.setConversationID(id);
+		
+		nms.getConnectionManager().sendMessages(tweetDto);
 
 	}
 	
-	public static void AddSpammer(String user, String spammer) throws IOException {
+	public static void AddSpammer(String user, String spammer, NetworkManagerService nms) throws IOException {
 
 		TweetDto tweetDto = new TweetDto();
 		tweetDto.setSender(user);
 		tweetDto.setSpammer(spammer);
 		tweetDto.setType(TweetDto.TYPE_SPAMMER);
 		tweetDto.setAvatar(UserData.getAvatar());
-		tweetDto.setTweetId(System.currentTimeMillis() + user);
-		NetworkManagerService.oos.writeObject(tweetDto);
-		NetworkManagerService.oos.flush();
-
+		String id = System.currentTimeMillis() + user;
+		tweetDto.setTweetId(id);
+		tweetDto.setConversationID(id);
+		nms.getConnectionManager().sendMessages(tweetDto);
 	}
 	
 	
 
-	public static void SendResponseTweet(String tweet, String user, byte[] image, String id, boolean privacy, boolean isPollAnswer, String asker) throws IOException {
+	public static void SendResponseTweet(String tweet, String user, byte[] image, String id, boolean privacy, boolean isPollAnswer, String asker, NetworkManagerService nms) throws IOException {
 		TweetDto tweetDto = new TweetDto();
 		tweetDto.setTweet(tweet);
 		tweetDto.setSender(user);
@@ -111,12 +114,11 @@ public class Utils {
 			tweetDto.addReceivingEntities("@" + user);
 		}
 		
-		NetworkManagerService.oos.writeObject(tweetDto);
-		NetworkManagerService.oos.flush();
+		nms.getConnectionManager().sendMessages(tweetDto);
 
 	}
 	
-	public static void sendPoll(String question, String user, HashSet<String> answers) throws IOException {
+	public static void sendPoll(String question, String user, HashSet<String> answers, NetworkManagerService nms) throws IOException {
 		TweetDto tweetDto = new TweetDto();
 		tweetDto.setTweet(question);
 		tweetDto.setType(TweetDto.TYPE_POLL);
@@ -127,9 +129,11 @@ public class Utils {
 		tweetDto.setLocation(null);
 		tweetDto.setAvatar(UserData.getAvatar());
 		
-		tweetDto.setTweetId(System.currentTimeMillis() + user);
-		NetworkManagerService.oos.writeObject(tweetDto);
-		NetworkManagerService.oos.flush();
+		String id = System.currentTimeMillis() + user;
+		tweetDto.setTweetId(id);
+		tweetDto.setConversationID(id);
+
+		nms.getConnectionManager().sendMessages(tweetDto);
 		
 		TimeLine.pollResultsChart.addNewPoll(tweetDto.getTweetId(), new ArrayList<String>(answers));
 	}

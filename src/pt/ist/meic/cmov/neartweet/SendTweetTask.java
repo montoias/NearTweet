@@ -13,13 +13,15 @@ public class SendTweetTask extends AsyncTask<Void, Void, Boolean> {
 	private byte[] image = null;
 	private String user;
 	private String location;
+	private NetworkManagerService nms;
 
 	public SendTweetTask(String tweet, String user, byte[] image,
-			String location) {
+			String location, NetworkManagerService networkManagerService) {
 		this.tweet = tweet;
 		this.user = user;
 		this.image = image;
 		this.location = location;
+		this.nms = networkManagerService;
 	}
 
 	@Override
@@ -38,7 +40,7 @@ public class SendTweetTask extends AsyncTask<Void, Void, Boolean> {
 			if (image == null)
 				image = checkForImageUrl(tweet);
 
-			Utils.SendTweet(tweet, user, image, location);
+			Utils.SendTweet(tweet, user, image, location, nms);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

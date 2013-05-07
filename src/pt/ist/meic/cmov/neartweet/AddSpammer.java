@@ -9,11 +9,13 @@ public class AddSpammer extends AsyncTask<Void, Void, Boolean> {
 	
 	private String user;
 	private String spammer;
+	private NetworkManagerService nms;
 	
 	
-	public AddSpammer(String user, String spammer) {
+	public AddSpammer(String user, String spammer, NetworkManagerService networkManagerService) {
 		this.user = user;
 		this.spammer = spammer;
+		this.nms = networkManagerService;
 	}
 	
 	@Override
@@ -28,7 +30,7 @@ public class AddSpammer extends AsyncTask<Void, Void, Boolean> {
 	@Override
 	protected Boolean doInBackground(Void... params) {
 		try {
-			Utils.AddSpammer(user, spammer);
+			Utils.AddSpammer(user, spammer, nms);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

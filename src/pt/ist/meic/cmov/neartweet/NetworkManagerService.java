@@ -1,14 +1,20 @@
 package pt.ist.meic.cmov.neartweet;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pBroadcast;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pInfo;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager;
+import pt.utl.ist.cmov.wifidirect.SimWifiP2pManager.Channel;
+import pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService;
+import pt.utl.ist.cmov.wifidirect.sockets.SimWifiP2pSocketManager;
 import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -16,6 +22,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
+import android.widget.Toast;
 
 public class NetworkManagerService extends Service {
 
@@ -36,15 +43,71 @@ public class NetworkManagerService extends Service {
 	static HashMap<String, Messenger> updateAdapters = new HashMap<String, Messenger>();
 
 	// To refactor the Code, if the fields are static we can in a simple way put
-	// in the AsynTask
-	static Socket socket;
-	static ObjectOutputStream oos;
-	static ObjectInputStream ois;
-	String user;
+	
+	private Messenger mService = null;
+	private boolean mBound = false;
+	private SimWifiP2pInfo gInfo = null;
+	private WifiDirectManager connectionManager;
+	private SimWifiP2pManager mManager = null;
+	private Channel mChannel = null;
+	private ServiceConnection mConnection = new ServiceConnection() {
+		// callbacks for service binding, passed to bindService()
 
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			mService = new Messenger(service);
+			mManager = new SimWifiP2pManager(mService);
+			mChannel = mManager.initialize(getApplication(), getMainLooper(), null);
+			mBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mService = null;
+			mManager = null;
+			mChannel = null;
+			mBound = false;
+		}
+	};
+	
+	public SimWifiP2pManager getManager() {
+		return mManager;
+	}
+
+	public Channel getChannel() {
+		return mChannel;
+	}
+	
+	public WifiDirectManager getConnectionManager(){
+		return connectionManager;
+	}
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mMessenger.getBinder();
+	}
+	
+	
+	public void initializeReceiver(){
+		// initialize the WDSim API
+		SimWifiP2pSocketManager.Init(getApplicationContext());
+
+		// register broadcast receiver
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
+		filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
+		filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
+		filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
+		SimWifiP2pBroadcastReceiver receiver = new SimWifiP2pBroadcastReceiver(	this);
+		registerReceiver(receiver, filter);
+		
+		// initialize WifiDirectManager
+		connectionManager = new WifiDirectManager(this);		
+		
+		//turn on wifi
+		Intent intent = new Intent(this, SimWifiP2pService.class);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		mBound = true;		
 	}
 
 	class IncomingHandler extends Handler { // Handler of incoming messages from
@@ -59,8 +122,10 @@ public class NetworkManagerService extends Service {
 			case MSG_REGISTER_CLIENT:
 				user = msg.getData().getString("user");
 				// This task also executes the Task of receiving Tweets
-				RegisterUserServiceTask rust = new RegisterUserServiceTask();
+				initializeReceiver();
+				RegisterUserServiceTask rust = new RegisterUserServiceTask(NetworkManagerService.this);
 				rust.registerUser(user, msg.replyTo);
+				Toast.makeText(getApplicationContext(), "Wifi is now Online", Toast.LENGTH_LONG).show();
 				break;
 
 			case SEND_TWEET:
@@ -68,7 +133,7 @@ public class NetworkManagerService extends Service {
 				image = msg.getData().getByteArray("image");
 				user = msg.getData().getString("user");
 				String location = msg.getData().getString("location");
-				SendTweetTask stt = new SendTweetTask(tweet, user, image, location);
+				SendTweetTask stt = new SendTweetTask(tweet, user, image, location, NetworkManagerService.this);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 					stt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
 							(Void[]) null);
@@ -88,7 +153,7 @@ public class NetworkManagerService extends Service {
 				privacy = msg.getData().getBoolean("privacy");
 				boolean isPollAnswer = msg.getData().getBoolean("isPollAnswer");
 				String asker = msg.getData().getString("asker");
-				SendResponseTweetTask srtt = new SendResponseTweetTask(tweet, user, image, conversationId, privacy, isPollAnswer, asker);
+				SendResponseTweetTask srtt = new SendResponseTweetTask(tweet, user, image, conversationId, privacy, isPollAnswer, asker, NetworkManagerService.this);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 					srtt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
 				else
@@ -107,7 +172,7 @@ public class NetworkManagerService extends Service {
 				tweet = msg.getData().getString("tweet");
 				user = msg.getData().getString("user");
 				HashSet<String> answers = new HashSet<String>(Utils.convertBytesToArray(msg.getData().getByteArray("answers")));
-				SendPollTask spt = new SendPollTask(tweet, user, answers);
+				SendPollTask spt = new SendPollTask(tweet, user, answers, NetworkManagerService.this);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 					spt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
 				else
@@ -118,7 +183,7 @@ public class NetworkManagerService extends Service {
 				user = msg.getData().getString("sender");
 				String spammer = msg.getData().getString("spammer");
 				
-				AddSpammer as = new AddSpammer(user, spammer);
+				AddSpammer as = new AddSpammer(user, spammer, NetworkManagerService.this);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 					as.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
 				else
@@ -144,7 +209,6 @@ public class NetworkManagerService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i("MyService", "Received start id " + startId + ": " + intent);
-
 		return START_STICKY; // run until explicitly stopped.
 	}
 	
@@ -156,11 +220,18 @@ public class NetworkManagerService extends Service {
 	}
 
 	public void closeSocket() {
-		try {
-			socket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (mBound) {
+			unbindService(mConnection);
+			mBound = false;
 		}
+	}
+	
+	public void setGInfo(SimWifiP2pInfo ginfo2) {
+		this.gInfo = ginfo2;
+	}
+
+	public SimWifiP2pInfo getGInfo() {
+		return gInfo;
 	}
 
 }

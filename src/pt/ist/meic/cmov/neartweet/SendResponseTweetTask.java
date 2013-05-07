@@ -17,8 +17,9 @@ public class SendResponseTweetTask extends AsyncTask<Void, Void, Boolean> {
 	private boolean privacy;
 	private boolean isPollAnswer;
 	private String asker;
+	private NetworkManagerService nms;
 	
-	public SendResponseTweetTask(String tweet, String user, byte[] image, String conversationId, boolean privacy, boolean isPollAnswer, String asker) {
+	public SendResponseTweetTask(String tweet, String user, byte[] image, String conversationId, boolean privacy, boolean isPollAnswer, String asker, NetworkManagerService networkManagerService) {
 		this.tweet = tweet;
 		this.user = user;
 		this.image=image;
@@ -26,6 +27,7 @@ public class SendResponseTweetTask extends AsyncTask<Void, Void, Boolean> {
 		this.privacy = privacy;
 		this.isPollAnswer = isPollAnswer;
 		this.asker = asker;
+		this.nms = networkManagerService;
 	}
 
 	@Override
@@ -33,7 +35,7 @@ public class SendResponseTweetTask extends AsyncTask<Void, Void, Boolean> {
 		try {	
 			//TODO: images on responses
 			
-			Utils.SendResponseTweet(tweet, user, image, conversationId, privacy, isPollAnswer, asker);
+			Utils.SendResponseTweet(tweet, user, image, conversationId, privacy, isPollAnswer, asker, nms);
 			return true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

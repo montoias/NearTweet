@@ -92,6 +92,8 @@
             android:name="pt.ist.meic.cmov.neartweet.SpamFragment"
             android:label="@string/title_activity_spam_fragment" >
         </activity>
+
+        <service android:name="pt.utl.ist.cmov.wifidirect.service.SimWifiP2pService" />
     </application>
 
 </manifest>

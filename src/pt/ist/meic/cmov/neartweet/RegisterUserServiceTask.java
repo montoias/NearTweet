@@ -1,37 +1,22 @@
 package pt.ist.meic.cmov.neartweet;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
-import pt.ist.meic.cmov.neartweet.dto.ResponseDto;
-import pt.ist.meic.cmov.neartweet.dto.TweetDto;
-import pt.ist.meic.cmov.neartweet.dto.UserNameDto;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
-import android.util.Log;
 
 public class RegisterUserServiceTask {
 	
-	public RegisterUserServiceTask() { }
+	private NetworkManagerService networkManagerService;
+
+	public RegisterUserServiceTask(NetworkManagerService networkManagerService) { this.networkManagerService = networkManagerService;}
 	
 	// used to invoke AsyncTask to register the user
 	public void registerUser(String user, Messenger msg) {
-
-		RegisterUserTask rtt = new RegisterUserTask(user, msg);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-			rtt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
-		else
-			rtt.execute((Void[]) null);
+		
+		networkManagerService.getConnectionManager().turnOnWifi(user, msg);
 	}
 
-	// Register user Task
+		
+
+/*	// Register user Task
 	public class RegisterUserTask extends AsyncTask<Void, Void, Boolean> {
 		Messenger replyTo;
 		String user;
@@ -60,8 +45,7 @@ public class RegisterUserServiceTask {
 		}
 
 		@Override
-		protected Boolean doInBackground(Void... params) { // This runs on a
-															// different thread
+		protected Boolean doInBackground(Void... params) { // This runs on a // different thread
 			try {
 				NetworkManagerService.socket = new Socket("10.0.2.2", 8081);
 				Log.d("Paulo", "Socket Created");
@@ -99,8 +83,8 @@ public class RegisterUserServiceTask {
 		}
 
 	}
-	
-	public void startReceivingTweets() {
+*/	
+/*	public void startReceivingTweets() {
 		ReceiveTweetTask task = new ReceiveTweetTask();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
@@ -116,7 +100,6 @@ public class RegisterUserServiceTask {
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				SpamFilter spamFilter = new SpamFilter();
 				
 				while (true) {
 					Log.i("Paulo", "Cheguei");
@@ -134,22 +117,12 @@ public class RegisterUserServiceTask {
 							UserData.addSpamInfraction(tweetDto);
 							continue;
 						}
-						
-//						if(spamFilter.isSpam(tweetMessage)){
-//							Log.d("Paulo", "Spam detected: " + tweetMessage);
-//							UserData.addSpamInfraction(sender);
-//							if(UserData.isSpammer(sender)){
-//								Log.d("Paulo", "New spammer: " + sender);
-//								continue;
-//							}
-//						}
-						
+										
 						//Add to the DB
 						NetworkManagerService.dataSource.createTweet(tweetDto);
 						
 						if(tweetDto.getType() == TweetDto.TYPE_POLL_ANSWER && ((tweetDto.getTweetId().split(" "))[1]).equals(UserData.user)) {
 							Log.d("Paulo", "Tweet of type " + tweetDto.getType() + " received from " + (tweetDto.getTweetId().split(" "))[1]);
-//							TimeLine.pollResultsChart.updateCounter(tweetDto.getConversationID(), tweetDto.getTweet().substring(tweetDto.getTweet().indexOf(' ') + 1));
 							TimeLine.pollResultsChart.updateCounter(tweetDto.getConversationID(), tweetDto.getTweet());
 						}
 						
@@ -184,5 +157,5 @@ public class RegisterUserServiceTask {
 			return null;
 		}
 	}
-
+*/
 }
