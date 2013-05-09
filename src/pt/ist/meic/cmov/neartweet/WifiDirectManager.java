@@ -229,17 +229,19 @@ public class WifiDirectManager {
 						Log.d("Paulo", "Received from" + receivedFrom);
 						continue;
 					}
-
+ 
 					String tweetMessage = Utils.convertTweetToString(tweetDto);
 					String sender = tweetDto.getSender();
 
 					Log.d("Paulo", " user: " + tweetDto.getSender());
+					
 
 					if (!UserData.isSpammer(sender)) {
 
 						if (tweetDto.getType() == TweetDto.TYPE_SPAMMER) {
 							Log.d("Paulo", "spammer: " + tweetDto.getSpammer() + " user: " + tweetDto.getSender());
 							UserData.addSpamInfraction(tweetDto);
+							sendMessages(tweetDto, receivedFrom);
 							continue;
 						}
 
