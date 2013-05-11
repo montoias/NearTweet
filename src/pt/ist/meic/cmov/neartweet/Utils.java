@@ -12,6 +12,7 @@ import java.util.HashSet;
 
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 
 public class Utils {
@@ -103,6 +104,7 @@ public class Utils {
 			tweetDto.setTweetId(System.currentTimeMillis() + user + " " + asker);
 		} else
 			tweetDto.setTweetId(System.currentTimeMillis() + user);
+		
 		tweetDto.setConversationID(id);
 		tweetDto.setPrivacy(privacy);
 		
@@ -140,14 +142,25 @@ public class Utils {
 	
 	public static byte[] convertBmpToBytes(Bitmap bmp) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		bmp.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, stream); 
 		return stream.toByteArray();
 	}
 	
+
 	
 	public static Bitmap convertBytesToBmp(byte[] bytes) {
-		ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-		return BitmapFactory.decodeStream(stream);
+		
+		 // First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+	    // Calculate inSampleSize
+	    options.inSampleSize = 4;
+
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
 	}
 	
 	public static ArrayList<String> convertBytesToArray(byte[] bytes){
@@ -182,6 +195,21 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return baos.toByteArray();
+
+	}
+
+	public static Bitmap convertBytesToBmpLowRes(byte[] bytes) {
+		 // First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+	    // Calculate inSampleSize
+	    options.inSampleSize = 64;
+
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
 
 	}
 }

@@ -46,10 +46,10 @@ public class CustomAdapter extends BaseAdapter {
 		TextView timeView = (TextView) v.findViewById(R.id.time);
 		
 		TweetDto msg = _data.get(position);
-		if(msg.getAvatar() == null)
+//		if(msg.getAvatar() == null)
 			image.setImageResource(R.drawable.ic_launcher);
-		else
-			image.setImageBitmap(Utils.convertBytesToBmp(msg.getAvatar()));
+//		else
+//			image.setImageBitmap(Utils.convertBytesToBmpLowRes(msg.getAvatar()));
 		
 		fromView.setText("@" + msg.getSender());
 		descView.setText(msg.getTweet());

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -175,7 +176,9 @@ public class Login extends Activity {
 				String picturePath = cursor.getString(columnIndex);
 				cursor.close();
 
-				UserData.setImage(Utils.convertBmpToBytes(BitmapFactory.decodeFile(picturePath)));
+				Bitmap bm = BitmapFactory.decodeFile(picturePath);
+				UserData.setImage(Utils.convertBmpToBytes(bm));
+				bm.recycle();
 
 				new AlertDialog.Builder(this).setTitle(title)
 						.setMessage(title + " image has been loaded sucessfully")

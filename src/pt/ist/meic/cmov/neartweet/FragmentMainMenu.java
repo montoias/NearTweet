@@ -55,7 +55,8 @@ public class FragmentMainMenu extends Activity implements PollChoserListener,
 		return true;
 	}
 
-	protected void onDestroy() {
+	@Override
+	public void onDestroy() {
 		super.onDestroy();
 		UserData.getBd().onDestroy();
 	}

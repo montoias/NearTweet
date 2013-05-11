@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -59,7 +58,7 @@ public class DisplayTweetInfo extends Activity {
 	byte[] imageBytes = null;
 	ArrayList<TweetDto> conversation, tweets;
 	Messenger mService = UserData.getBoundedMessenger();
-	ArrayAdapter<String> adapter;
+	CustomAdapter adapter;
 	ListView listView;
 
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -73,8 +72,9 @@ public class DisplayTweetInfo extends Activity {
 //				Log.d("Paulo", "displayTweetIngo- update Adapter");
 //				Log.d("Paulo", "TimeLine: mensagem" + msg.getData().getString("tweet"));
 
-				drawTimeLine();
+				adapter = null;
 				
+				drawTimeLine();
 
 //				if(!(msg.getData().getInt("type") == TweetDto.TYPE_POLL))
 //					adapter.add("\t" + msg.getData().getString("tweet"));
@@ -99,7 +99,8 @@ public class DisplayTweetInfo extends Activity {
 		Collections.reverse(conversation);
 
 		listView = (ListView) findViewById(R.id.listTweetInfo);
-		listView.setAdapter(new CustomAdapter(conversation, this));
+		adapter = new CustomAdapter(conversation, this);
+		listView.setAdapter(adapter);
 	}
 
 	private enum PendingAction {
@@ -125,6 +126,7 @@ public class DisplayTweetInfo extends Activity {
 					public void onItemClick(AdapterView<?> arg0, View view,
 							int position, long id) {
 						
+						
 						if (conversation.get(position).getImage() != null) {
 							imageBytes = conversation.get(position).getImage();
 							bm = Utils.convertBytesToBmp(imageBytes);
@@ -132,8 +134,7 @@ public class DisplayTweetInfo extends Activity {
 						}
 
 						message = conversation.get(position).getTweet();
-						String location = conversation.get(position)
-								.getLocation();
+						String location = conversation.get(position).getLocation();
 						Log.d("Paulo", "location" + location);
 						((TextView) findViewById(R.id.DisplayLocation))
 								.setText("Sent From : " + location);

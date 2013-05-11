@@ -77,10 +77,10 @@ public class TweetsDataSource {
 
 	private TweetDto cursorToComment(Cursor cursor) {
 		try {
-			byte[] dtoBytes = cursor.getBlob(1);
-			ByteArrayInputStream in = new ByteArrayInputStream(dtoBytes);
+			ByteArrayInputStream in = new ByteArrayInputStream(cursor.getBlob(1));
 			ObjectInputStream is = new ObjectInputStream(in);
 			Object obj = is.readObject();
+			is.close();
 			return (TweetDto) obj;
 		} catch (StreamCorruptedException e) {
 			e.printStackTrace();

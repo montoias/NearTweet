@@ -57,7 +57,6 @@ public class TimeLine extends Fragment {
 		listView = (ListView) getActivity().findViewById(R.id.list);
 		listView.setAdapter(new CustomAdapter(dataSource.getAllTweets(),getActivity()));
 		registerForContextMenu(listView);
-		// registerForContextMenu(listView);
 	}
 
 	@Override

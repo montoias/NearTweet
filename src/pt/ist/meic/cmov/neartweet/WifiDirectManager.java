@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import pt.ist.meic.cmov.neartweet.dto.TweetDto;
@@ -32,18 +33,21 @@ public class WifiDirectManager {
 		this.activity = activity;
 	}
 
-	public void updateSockets(SimWifiP2pInfo ginfo, SimWifiP2pDeviceList gdeviceList) {
+	public void updateSockets(SimWifiP2pInfo ginfo,
+			SimWifiP2pDeviceList gdeviceList) {
 
 		activity.setGInfo(ginfo);
 
 		clearsockets();
 
 		if (ginfo.askIsClient()) {
-			Log.d("Paulo", "updateMember - get all owners " + ginfo.getAllGroupOwners().size());
+			Log.d("Paulo", "updateMember - get all owners "
+					+ ginfo.getAllGroupOwners().size());
 			new OutgoingCommTask(ginfo.getAllGroupOwners(), gdeviceList)
 					.execute();
 		} else {
-			Log.d("Paulo", "updateMember - get all devices " + ginfo.getAllDevices().size());
+			Log.d("Paulo", "updateMember - get all devices "
+					+ ginfo.getAllDevices().size());
 			new OutgoingCommTask(ginfo.getAllDevices(), gdeviceList).execute();
 		}
 
@@ -52,7 +56,7 @@ public class WifiDirectManager {
 	private void clearsockets() {
 		for (SocketsInfo socket : mCliSocket.values()) {
 			try {
-			//	socket.getSocket().close();
+				// socket.getSocket().close();
 				socket.getOos().close();
 			} catch (IOException e) {
 				Log.d("Paulo", "clearsockets error");
@@ -66,7 +70,8 @@ public class WifiDirectManager {
 		Set<String> peerNames;
 		SimWifiP2pDeviceList deviceList;
 
-		public OutgoingCommTask(Set<String> peerNames,	SimWifiP2pDeviceList gdeviceList) {
+		public OutgoingCommTask(Set<String> peerNames,
+				SimWifiP2pDeviceList gdeviceList) {
 
 			this.peerNames = peerNames;
 			this.deviceList = gdeviceList;
@@ -74,34 +79,38 @@ public class WifiDirectManager {
 
 		@Override
 		protected String doInBackground(String... params) {
-				deviceName = activity.getGInfo().getDeviceName();
-				Log.d("Paulo", "MyName: " + deviceName + " peers size: " + peerNames.size());
-				for (String peer : peerNames) {
-					try {
-						SimWifiP2pSocket socket = new SimWifiP2pSocket(deviceList.getByName(peer).getVirtIp(), Integer.parseInt(activity.getString(R.string.port)));
-						SocketsInfo socketInfo = new SocketsInfo(socket);
-						mCliSocket.put(peer,socketInfo);
-						TweetDto tweetDto = new TweetDto();
-						tweetDto.setConversationID("-2");
-						tweetDto.setTweet(deviceName);
-						ObjectOutputStream oos = socketInfo.getOos();
-						oos.writeObject(tweetDto);
-						oos.flush();
-						Log.d("Paulo", "added peer -> " + peer);
-					} catch (UnknownHostException e) {
-						Log.d("Paulo", "Unknown Host:" + e.getMessage());
-					} catch (IOException e) {
-						e.printStackTrace();
-						Log.d("Paulo", "IO error:" + e.getMessage());
-					}
+			deviceName = activity.getGInfo().getDeviceName();
+			Log.d("Paulo", "MyName: " + deviceName + " peers size: "
+					+ peerNames.size());
+			for (String peer : peerNames) {
+				try {
+					SimWifiP2pSocket socket = new SimWifiP2pSocket(deviceList
+							.getByName(peer).getVirtIp(),
+							Integer.parseInt(activity.getString(R.string.port)));
+					SocketsInfo socketInfo = new SocketsInfo(socket);
+					mCliSocket.put(peer, socketInfo);
+					TweetDto tweetDto = new TweetDto();
+					tweetDto.setConversationID("-2");
+					tweetDto.setTweet(deviceName);
+					ObjectOutputStream oos = socketInfo.getOos();
+					oos.writeObject(tweetDto);
+					oos.flush();
+					Log.d("Paulo", "added peer -> " + peer);
+				} catch (UnknownHostException e) {
+					Log.d("Paulo", "Unknown Host:" + e.getMessage());
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.d("Paulo", "IO error:" + e.getMessage());
 				}
+			}
 
 			return "nothing happened";
 		}
 
 	}
 
-	public class IncommingCommTask extends AsyncTask<Void, SimWifiP2pSocket, Void> {
+	public class IncommingCommTask extends
+			AsyncTask<Void, SimWifiP2pSocket, Void> {
 
 		String user;
 		Messenger replyTo;
@@ -114,11 +123,14 @@ public class WifiDirectManager {
 		@Override
 		protected Void doInBackground(Void... params) {
 			Bundle b = new Bundle();
-			Message msg = Message.obtain(null,	NetworkManagerService.RGST_CLIENT_RSP);
-			Log.d("Paulo", "IncommingCommTask started (" + this.hashCode()	+ ").");
+			Message msg = Message.obtain(null,
+					NetworkManagerService.RGST_CLIENT_RSP);
+			Log.d("Paulo", "IncommingCommTask started (" + this.hashCode()
+					+ ").");
 
 			try {
-				mSrvSocket = new SimWifiP2pSocketServer(Integer.parseInt(activity.getString(R.string.port)));
+				mSrvSocket = new SimWifiP2pSocketServer(
+						Integer.parseInt(activity.getString(R.string.port)));
 				b.putBoolean("registerUserResult", true);
 
 				msg.setData(b);
@@ -143,9 +155,9 @@ public class WifiDirectManager {
 							mCliSocket.remove(mCliSocket.get(peer));
 					}
 
-					
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-						new ReceiveCommTask(sock).executeOnExecutor(	AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
+						new ReceiveCommTask(sock).executeOnExecutor(
+								AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
 					else
 						new ReceiveCommTask(sock).execute();
 
@@ -154,7 +166,7 @@ public class WifiDirectManager {
 					break;
 				}
 			}
-			
+
 			Log.d("Paulo", "SHOULD NOT HAPPEN");
 			return null;
 		}
@@ -173,9 +185,9 @@ public class WifiDirectManager {
 	public void disconnectPeer() {
 		if (!mCliSocket.isEmpty()) {
 			try {
-				for (SocketsInfo socket : mCliSocket.values()){
+				for (SocketsInfo socket : mCliSocket.values()) {
 					socket.getOos().close();
-			//		socket.getSocket().close();
+					// socket.getSocket().close();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -201,10 +213,10 @@ public class WifiDirectManager {
 		}
 	}
 
-	public class ReceiveCommTask extends	AsyncTask<Void, Object, Void> {
+	public class ReceiveCommTask extends AsyncTask<Void, Object, Void> {
 		SimWifiP2pSocket s;
 		String receivedFrom;
-		
+
 		public ReceiveCommTask(SimWifiP2pSocket socket) {
 			this.s = socket;
 		}
@@ -223,66 +235,90 @@ public class WifiDirectManager {
 
 				while ((tweetDto = (TweetDto) sockIn.readObject()) != null) {
 					Log.d("Paulo", "obj readed");
-					
-					if(tweetDto.getConversationID().equals("-2")){
+
+					if (tweetDto.getConversationID().equals("-2")) {
 						receivedFrom = tweetDto.getTweet();
 						Log.d("Paulo", "Received from" + receivedFrom);
 						continue;
 					}
- 
+
 					String tweetMessage = Utils.convertTweetToString(tweetDto);
 					String sender = tweetDto.getSender();
 
 					Log.d("Paulo", " user: " + tweetDto.getSender());
-					
 
 					if (!UserData.isSpammer(sender)) {
 
 						if (tweetDto.getType() == TweetDto.TYPE_SPAMMER) {
-							Log.d("Paulo", "spammer: " + tweetDto.getSpammer() + " user: " + tweetDto.getSender());
+							Log.d("Paulo", "spammer: " + tweetDto.getSpammer()
+									+ " user: " + tweetDto.getSender());
 							UserData.addSpamInfraction(tweetDto);
 							sendMessages(tweetDto, receivedFrom);
 							continue;
 						}
 
-						// send tweets
-						Log.d("Paulo","sendMessages : " + mCliSocket.size());
-						for (String socket : mCliSocket.keySet()) {
-							if (socket.equalsIgnoreCase(receivedFrom))
-								continue;
-							try {
-								Log.d("Paulo", "about to send to " + socket);
-								mCliSocket.get(socket).getOos().writeObject(tweetDto);
-								mCliSocket.get(socket).getOos().flush();
-							} catch (IOException e) {
-								Log.d("Paulo", "couldn't send the tweet to " + socket);
-							}
-						}
+						if (!tweetDto.getPrivacy()) {
 
-						Log.d("Paulo", "conversation id : " + tweetDto.getConversationID());
-						if(!tweetDto.getPrivacy()){
+							// send tweets
+							Log.d("Paulo", "sendMessages : " + mCliSocket.size());
+							for (String socket : mCliSocket.keySet()) {
+								if (socket.equalsIgnoreCase(receivedFrom))
+									continue;
+								try {
+									Log.d("Paulo", "about to send to " + socket);
+									mCliSocket.get(socket).getOos().writeObject(tweetDto);
+									mCliSocket.get(socket).getOos().flush();
+								} catch (IOException e) {
+									Log.d("Paulo", "couldn't send the tweet to " + socket);
+								}
+							}
+
+							Log.d("Paulo", "conversation id : " + tweetDto.getConversationID());
 							// Add to the DB
 							NetworkManagerService.dataSource.createTweet(tweetDto);
-	
-							if (tweetDto.getType() == TweetDto.TYPE_POLL_ANSWER && ((tweetDto.getTweetId().split(" "))[1]).equals(UserData.user)) {
+
+							if (tweetDto.getType() == TweetDto.TYPE_POLL_ANSWER && ((tweetDto.getTweetId().split(" "))[1])											.equals(UserData.user)) {
 								Log.d("Paulo", "Tweet of type " + tweetDto.getType() + " received from " + (tweetDto.getTweetId().split(" "))[1]);
-								TimeLine.pollResultsChart.updateCounter( tweetDto.getConversationID(),  tweetDto.getTweet());
+								TimeLine.pollResultsChart.updateCounter(tweetDto.getConversationID(), tweetDto.getTweet());
 							}
-	
+
 							// Update adapters
 							updateAdapters(tweetMessage, tweetDto);
 							Log.i("Paulo", NetworkManagerService.dataSource.toString());
+							
 						} else {
-							for(String entities: tweetDto.getReceivingEntities()){
-								if(entities.contains(UserData.getUser())){
+							
+							int i = 0;
+							if (activity.getGInfo().askIsGO()) {
+								Log.d("Paulo", "Im owner");
+								for (String entities : tweetDto.getReceivingEntities()) {
+									for(String s : mCliSocket.keySet()){
+										if (s.equalsIgnoreCase(entities)){
+											i++;
+											Log.d("Paulo", "In my network ->" + entities);
+										}
+									}
+								}
+								if (i == tweetDto.getReceivingEntities().size()) 
+									sendToEntities(tweetDto.getReceivingEntities(), tweetDto, receivedFrom); //sendtoFew
+								else 
+									sendMessages(tweetDto, receivedFrom); //broadcast
+							} else {
+								sendMessages(tweetDto, receivedFrom); //broadcast
+							}
+
+							
+
+							for (String entities : tweetDto.getReceivingEntities()) {
+								if (entities.contains(UserData.getUser())) {
 									// Add to the DB
 									NetworkManagerService.dataSource.createTweet(tweetDto);
-			
+
 									if (tweetDto.getType() == TweetDto.TYPE_POLL_ANSWER && ((tweetDto.getTweetId().split(" "))[1]).equals(UserData.user)) {
-										Log.d("Paulo", "Tweet of type " + tweetDto.getType() + " received from " + (tweetDto.getTweetId().split(" "))[1]);
-										TimeLine.pollResultsChart.updateCounter( tweetDto.getConversationID(),  tweetDto.getTweet());
+										Log.d("Paulo","Tweet of type " + tweetDto.getType() + " received from " + (tweetDto.getTweetId() .split(" "))[1]);
+										TimeLine.pollResultsChart.updateCounter(tweetDto.getConversationID(),tweetDto.getTweet());
 									}
-			
+
 									// Update adapters
 									updateAdapters(tweetMessage, tweetDto);
 									Log.i("Paulo", NetworkManagerService.dataSource.toString());
@@ -292,15 +328,37 @@ public class WifiDirectManager {
 						}
 					} else
 						Log.d("Paulo", "Spam infractor: " + sender);
-			}
+				}
 			} catch (IOException e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 				Log.d("Paulo", "Changed Sockets");
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return null;
+		}
+
+		private void sendToEntities(HashSet<String> receivingEntities, TweetDto tweetDto, String receivedFrom) {
+			// send tweets to everyone
+			Log.d("Paulo", "sendMessages To few : " + mCliSocket.size());
+			boolean sendtoThisEnt = false;
+			for (String socket : mCliSocket.keySet()) {
+				for(String s : receivingEntities) {
+					if(socket.equalsIgnoreCase(s))
+						sendtoThisEnt = true;
+				}
+				if(sendtoThisEnt && !receivedFrom.equalsIgnoreCase(socket)) {
+					try {
+						Log.d("Paulo", "about to send to " + socket);
+						mCliSocket.get(socket).getOos().writeObject(tweetDto);
+						mCliSocket.get(socket).getOos().flush();
+					} catch (IOException e) {
+						Log.d("Paulo", "couldn't send the tweet to " + socket);
+					}
+				}
+				sendtoThisEnt = false;
+			}
 		}
 
 		@Override
@@ -317,14 +375,17 @@ public class WifiDirectManager {
 	}
 
 	public void updateAdapters(String tweetMessage, TweetDto tweetDto) {
-		for (Messenger messenger : NetworkManagerService.updateAdapters.values()) {
-			Log.d("Paulo", "size " + NetworkManagerService.updateAdapters.size());
+		for (Messenger messenger : NetworkManagerService.updateAdapters
+				.values()) {
+			Log.d("Paulo",
+					"size " + NetworkManagerService.updateAdapters.size());
 			Bundle b = new Bundle();
 
 			b.putString("tweet", tweetMessage);
 			b.putInt("type", tweetDto.getType());
 			b.putString("id", tweetDto.getConversationID());
-			Message msgData = Message.obtain(null, NetworkManagerService.UPDATE_ADAPTER);
+			Message msgData = Message.obtain(null,
+					NetworkManagerService.UPDATE_ADAPTER);
 			msgData.setData(b);
 			try {
 				messenger.send(msgData);
@@ -335,7 +396,8 @@ public class WifiDirectManager {
 	}
 
 	public void sendMessages(TweetDto dto) {
-		Log.d("Paulo","sendMessages - size of mCliSocket: " + mCliSocket.size());
+		Log.d("Paulo",
+				"sendMessages - size of mCliSocket: " + mCliSocket.size());
 		for (String socket : mCliSocket.keySet()) {
 			try {
 				Log.d("Paulo", "about to send to " + socket);
@@ -347,8 +409,10 @@ public class WifiDirectManager {
 			}
 		}
 
-		if(dto.getType() == TweetDto.TYPE_SPAMMER){
-			Log.d("Paulo", "spammer: " + dto.getSpammer() + " user: " + dto.getSender());
+		if (dto.getType() == TweetDto.TYPE_SPAMMER) {
+			Log.d("Paulo",
+					"spammer: " + dto.getSpammer() + " user: "
+							+ dto.getSender());
 			UserData.addSpamInfraction(dto);
 			return;
 		}
@@ -359,4 +423,5 @@ public class WifiDirectManager {
 		updateAdapters(Utils.convertTweetToString(dto), dto);
 
 	}
+	
 }

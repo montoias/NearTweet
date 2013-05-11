@@ -216,6 +216,7 @@ public class NetworkManagerService extends Service {
 	public void onDestroy(){
 		super.onDestroy();
 		dataSource.close();
+		closeSocket();
 		
 	}
 
