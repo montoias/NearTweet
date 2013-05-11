@@ -150,9 +150,11 @@ public class WifiDirectManager {
 				try {
 					SimWifiP2pSocket sock = mSrvSocket.accept();
 					Log.d("Paulo", "accepted a socket");
-					for (String peer : mCliSocket.keySet()) {
-						if (mCliSocket.get(peer).getSocket().isClosed())
-							mCliSocket.remove(mCliSocket.get(peer));
+					synchronized (mCliSocket) { 
+						for (String peer : mCliSocket.keySet()) {
+							if (mCliSocket.get(peer).getSocket().isClosed())
+								mCliSocket.remove(mCliSocket.get(peer));
+						}
 					}
 
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)

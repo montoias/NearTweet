@@ -26,6 +26,7 @@ public class AddSpammer extends AsyncTask<Void, Void, Boolean> {
 			Log.d("Paulo", "Do in backgroud executed incorrectly --> NOT Sended!!! Add spammer");
 		}
 	}
+	
 
 	@Override
 	protected Boolean doInBackground(Void... params) {
